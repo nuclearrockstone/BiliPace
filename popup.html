@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>播放速度微调设置</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <h1>Bilibili 播放速度微调</h1>
+
+  <section>
+    <h2>调节范围</h2>
+    <label>
+      <span>最小速度</span>
+      <input type="number" id="min" step="0.05" min="0.05">
+    </label>
+    <label>
+      <span>最大速度</span>
+      <input type="number" id="max" step="0.05" min="0.05">
+    </label>
+    <label>
+      <span>滑块步进</span>
+      <input type="number" id="step" step="0.005" min="0.001">
+    </label>
+    <label>
+      <span>微调步长</span>
+      <input type="number" id="fineStep" step="0.01" min="0.01">
+    </label>
+  </section>
+
+  <section>
+    <h2>常用倍速</h2>
+    <div id="presets"></div>
+    <button type="button" id="addPreset">+ 添加</button>
+  </section>
+
+  <section class="actions">
+    <button type="button" id="save" class="primary">保存</button>
+    <button type="button" id="reset">恢复默认</button>
+  </section>
+
+  <div id="status"></div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

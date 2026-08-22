@@ -1,0 +1,197 @@
+.bpx-player-ctrl-playbackrate {
+  position: relative;
+  overflow: visible !important;
+}
+
+.bpx-player-ctrl-playbackrate-unlogin {
+  display: none !important;
+}
+
+.bprft-menu {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 10px);
+  width: 232px;
+  box-sizing: border-box;
+  padding: 14px;
+  background: rgba(15, 15, 20, 0.72);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+  color: #f2f3f5;
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  z-index: 99999;
+  opacity: 0;
+  transform: translateY(6px);
+  visibility: hidden;
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+  pointer-events: none;
+  user-select: none;
+}
+
+.bprft-menu.is-open {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.bprft-display {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.bprft-value {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+
+.bprft-label {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 2px;
+}
+
+.bprft-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #fb7299 var(--fill, 25%), rgba(255, 255, 255, 0.18) var(--fill, 25%));
+  outline: none;
+  margin: 6px 0 14px;
+  cursor: pointer;
+}
+
+.bprft-slider::-webkit-slider-runnable-track {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 999px;
+  background: transparent;
+}
+
+.bprft-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  margin-top: -5px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid #fb7299;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
+
+.bprft-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid #fb7299;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
+
+.bprft-slider::-moz-range-track {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+}
+
+.bprft-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.bprft-btn {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-family: inherit;
+}
+
+.bprft-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.bprft-btn:active {
+  transform: scale(0.95);
+}
+
+.bprft-input {
+  flex: 1;
+  min-width: 0;
+  height: 30px;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 13px;
+  text-align: center;
+  outline: none;
+  font-family: inherit;
+}
+
+.bprft-input:focus {
+  border-color: #fb7299;
+}
+
+.bprft-input::-webkit-outer-spin-button,
+.bprft-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.bprft-input[type=number] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.bprft-presets {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.bprft-chip {
+  height: 26px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+
+.bprft-chip:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.bprft-chip.is-active {
+  background: rgba(251, 114, 153, 0.22);
+  border-color: rgba(251, 114, 153, 0.7);
+  color: #fb9bb4;
+}
