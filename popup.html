@@ -6,53 +6,104 @@
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-  <h1>Bilibili 播放速度微调</h1>
-
-  <section>
-    <h2>调节范围</h2>
-    <label>
-      <span>最小速度</span>
-      <input type="number" id="min" step="0.05" min="0.05">
-    </label>
-    <label>
-      <span>最大速度</span>
-      <input type="number" id="max" step="0.05" min="0.05">
-    </label>
-    <label>
-      <span>滑块步进</span>
-      <input type="number" id="step" step="0.005" min="0.001">
-    </label>
-    <label>
-      <span>微调步长</span>
-      <input type="number" id="fineStep" step="0.01" min="0.01">
-    </label>
-  </section>
-
-  <section>
-    <h2>常用倍速</h2>
-    <div id="presets"></div>
-    <button type="button" id="addPreset">+ 添加</button>
-  </section>
-
-  <section>
-    <h2>标题倍速匹配</h2>
-    <label class="toggle-row">
-      <span>启用标题匹配(标题含关键词自动套用倍速)</span>
-      <input type="checkbox" id="titleMatchEnabled">
-    </label>
-    <div id="titleRules"></div>
-    <div class="rule-actions">
-      <button type="button" id="addTitleRule">+ 添加关键词规则</button>
-      <button type="button" id="autoAddTitle">自动添加当前视频</button>
+  <header class="app-header">
+    <img src="icon128.png" class="logo" alt="扩展图标" width="40" height="40">
+    <div class="title-wrap">
+      <h1>播放速度微调</h1>
+      <p class="sub">Bilibili 无极调速 · 标题匹配 · 一键切换</p>
     </div>
-  </section>
+  </header>
 
-  <section class="actions">
-    <button type="button" id="save" class="primary">保存</button>
-    <button type="button" id="reset">恢复默认</button>
-  </section>
+  <main>
+    <!-- 调节范围 -->
+    <section class="panel" data-panel="range">
+      <div class="panel-head" role="button" tabindex="0" aria-expanded="true">
+        <span class="panel-title">调节范围</span>
+        <span class="chevron" aria-hidden="true"></span>
+      </div>
+      <div class="panel-body">
+        <div class="field-grid">
+          <div class="field">
+            <span class="field-label">最小速度</span>
+            <div class="stepper">
+              <button type="button" class="stepper-btn dec" aria-label="减少">−</button>
+              <input type="number" id="min" step="0.05" min="0.05" placeholder="0.1">
+              <button type="button" class="stepper-btn inc" aria-label="增加">+</button>
+            </div>
+          </div>
+          <div class="field">
+            <span class="field-label">最大速度</span>
+            <div class="stepper">
+              <button type="button" class="stepper-btn dec" aria-label="减少">−</button>
+              <input type="number" id="max" step="0.05" min="0.05" placeholder="4.0">
+              <button type="button" class="stepper-btn inc" aria-label="增加">+</button>
+            </div>
+          </div>
+          <div class="field">
+            <span class="field-label">滑块步进</span>
+            <div class="stepper">
+              <button type="button" class="stepper-btn dec" aria-label="减少">−</button>
+              <input type="number" id="step" step="0.005" min="0.001" placeholder="0.01">
+              <button type="button" class="stepper-btn inc" aria-label="增加">+</button>
+            </div>
+          </div>
+          <div class="field">
+            <span class="field-label">微调步长</span>
+            <div class="stepper">
+              <button type="button" class="stepper-btn dec" aria-label="减少">−</button>
+              <input type="number" id="fineStep" step="0.01" min="0.01" placeholder="0.05">
+              <button type="button" class="stepper-btn inc" aria-label="增加">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-  <div id="status"></div>
+    <!-- 常用倍速 -->
+    <section class="panel" data-panel="presets">
+      <div class="panel-head" role="button" tabindex="0" aria-expanded="true">
+        <span class="panel-title">常用倍速</span>
+        <span class="chevron" aria-hidden="true"></span>
+      </div>
+      <div class="panel-body">
+        <div id="presets" class="preset-list"></div>
+        <button type="button" id="addPreset" class="add-btn">
+          <span class="icon">+</span> 添加常用倍速
+        </button>
+      </div>
+    </section>
+
+    <!-- 标题倍速匹配 -->
+    <section class="panel" data-panel="titleMatch">
+      <div class="panel-head" role="button" tabindex="0" aria-expanded="true">
+        <span class="panel-title">标题倍速匹配</span>
+        <label class="switch" title="启用标题匹配">
+          <input type="checkbox" id="titleMatchEnabled">
+          <span class="slider"></span>
+        </label>
+        <span class="chevron" aria-hidden="true"></span>
+      </div>
+      <div class="panel-body">
+        <p class="hint">视频标题含关键词时，自动套用对应倍速</p>
+        <div id="titleRules" class="rule-list"></div>
+        <div class="rule-actions">
+          <button type="button" id="addTitleRule" class="add-btn ghost">
+            <span class="icon">+</span> 关键词规则
+          </button>
+          <button type="button" id="autoAddTitle" class="add-btn primary-soft">
+            自动添加当前视频
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="actions">
+      <button type="button" id="save" class="btn primary">保存设置</button>
+      <button type="button" id="reset" class="btn secondary">恢复默认</button>
+    </section>
+
+    <div id="status" role="status" aria-live="polite"></div>
+  </main>
 
   <script src="popup.js"></script>
 </body>
