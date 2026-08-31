@@ -11,6 +11,11 @@
 
   const $ = id => document.getElementById(id);
   const presetsBox = $('presets');
+  const rulesBox = $('titleRules');
+
+  function uid() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  }
 
   function sanitizePresets(list) {
     if (!Array.isArray(list)) return [...DEFAULTS.presets];
@@ -50,6 +55,83 @@
     list.forEach(v => presetsBox.appendChild(makeRow(v)));
   }
 
+  function sanitizeRule(rule, fallbackId) {
+    const keyword = String((rule && rule.keyword) || '').trim();
+    if (!keyword) return null;
+    const rate = Math.round((+rule.rate || 0) * 100) / 100;
+    if (!isFinite(rate) || rate <= 0) return null;
+    return { id: (rule && rule.id) || fallbackId || uid(), keyword, rate };
+  }
+
+  function sanitizeRules(list) {
+    if (!Array.isArray(list)) return [];
+    const seen = new Set();
+    const out = [];
+    for (const r of list) {
+      const s = sanitizeRule(r);
+      if (!s || seen.has(s.keyword)) continue;
+      seen.add(s.keyword);
+      out.push(s);
+    }
+    return out;
+  }
+
+  function makeRuleRow(rule) {
+    const row = document.createElement('div');
+    row.className = 'rule-row';
+    row.dataset.id = rule.id;
+    const kw = document.createElement('input');
+    kw.type = 'text';
+    kw.className = 'rule-keyword';
+    kw.value = rule.keyword;
+    kw.placeholder = '标题关键词';
+    const rate = document.createElement('input');
+    rate.type = 'number';
+    rate.className = 'rule-rate';
+    rate.value = rule.rate;
+    rate.step = 0.01;
+    rate.min = 0.05;
+    const del = document.createElement('button');
+    del.type = 'button';
+    del.className = 'del';
+    del.textContent = '✕';
+    del.setAttribute('aria-label', '删除');
+    del.addEventListener('click', () => row.remove());
+    row.append(kw, rate, del);
+    return row;
+  }
+
+  function renderRuleRows(list) {
+    rulesBox.innerHTML = '';
+    list.forEach(r => rulesBox.appendChild(makeRuleRow(r)));
+  }
+
+  function collectRules() {
+    const out = [];
+    rulesBox.querySelectorAll('.rule-row').forEach(row => {
+      const s = sanitizeRule({
+        id: row.dataset.id,
+        keyword: row.querySelector('.rule-keyword').value,
+        rate: row.querySelector('.rule-rate').value
+      });
+      if (s) out.push(s);
+    });
+    return out;
+  }
+
+  function upsertRule(keyword, rate) {
+    const rows = rulesBox.querySelectorAll('.rule-row');
+    for (const row of rows) {
+      if (row.querySelector('.rule-keyword').value.trim() === keyword) {
+        row.querySelector('.rule-rate').value = rate;
+        return row;
+      }
+    }
+    const row = makeRuleRow({ id: uid(), keyword, rate });
+    rulesBox.appendChild(row);
+    return row;
+  }
+
   function collectPresets() {
     const out = [];
     presetsBox.querySelectorAll('input').forEach(inp => {
@@ -81,6 +163,10 @@
       $('fineStep').value = data.fineStep;
       renderPresetRows(sanitizePresets(data.presets));
     });
+    chrome.storage.sync.get({ titleRules: [], titleMatchEnabled: true }, data => {
+      $('titleMatchEnabled').checked = data.titleMatchEnabled !== false;
+      renderRuleRows(sanitizeRules(data.titleRules));
+    });
   }
 
   function save() {
@@ -89,7 +175,9 @@
       max: num('max', DEFAULTS.max),
       step: num('step', DEFAULTS.step),
       fineStep: num('fineStep', DEFAULTS.fineStep),
-      presets: sanitizePresets(collectPresets())
+      presets: sanitizePresets(collectPresets()),
+      titleRules: sanitizeRules(collectRules()),
+      titleMatchEnabled: $('titleMatchEnabled').checked
     };
     if (data.min >= data.max) {
       showStatus('最小速度需小于最大速度', true);
@@ -101,10 +189,37 @@
     }
     chrome.storage.sync.set(data, () => showStatus('已保存'));
     renderPresetRows(data.presets);
+    renderRuleRows(data.titleRules);
+  }
+
+  function autoAddTitle() {
+    chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+      const tab = tabs && tabs[0];
+      if (!tab || tab.id == null) {
+        showStatus('未找到当前标签页', true);
+        return;
+      }
+      chrome.tabs.sendMessage(tab.id, { type: 'GET_VIDEO_INFO' }, resp => {
+        if (chrome.runtime.lastError || !resp || !resp.title) {
+          showStatus('当前页面不是 B 站视频页,或请先刷新页面', true);
+          return;
+        }
+        const title = String(resp.title).trim();
+        const rate = Math.round((+resp.rate || 1) * 100) / 100;
+        upsertRule(title, rate);
+        showStatus('已添加:' + title + ' @ ' + rate + 'x');
+      });
+    });
   }
 
   $('save').addEventListener('click', save);
   $('addPreset').addEventListener('click', () => presetsBox.appendChild(makeRow(DEFAULTS.presets[0])));
+  $('addTitleRule').addEventListener('click', () => {
+    const row = makeRuleRow({ id: uid(), keyword: '', rate: 1 });
+    rulesBox.appendChild(row);
+    row.querySelector('.rule-keyword').focus();
+  });
+  $('autoAddTitle').addEventListener('click', autoAddTitle);
   $('reset').addEventListener('click', () => {
     chrome.storage.sync.set(DEFAULTS, () => {
       load();

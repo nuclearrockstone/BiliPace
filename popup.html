@@ -34,6 +34,19 @@
     <button type="button" id="addPreset">+ 添加</button>
   </section>
 
+  <section>
+    <h2>标题倍速匹配</h2>
+    <label class="toggle-row">
+      <span>启用标题匹配(标题含关键词自动套用倍速)</span>
+      <input type="checkbox" id="titleMatchEnabled">
+    </label>
+    <div id="titleRules"></div>
+    <div class="rule-actions">
+      <button type="button" id="addTitleRule">+ 添加关键词规则</button>
+      <button type="button" id="autoAddTitle">自动添加当前视频</button>
+    </div>
+  </section>
+
   <section class="actions">
     <button type="button" id="save" class="primary">保存</button>
     <button type="button" id="reset">恢复默认</button>

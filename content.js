@@ -16,7 +16,8 @@
     menuSel: '.bpx-player-ctrl-playbackrate-menu',
     resultSel: '.bpx-player-ctrl-playbackrate-result',
     unloginSel: '.bpx-player-ctrl-playbackrate-unlogin',
-    unloginStateCls: 'bpx-player-ctrl-playbackrate-unlogin-state'
+    unloginStateCls: 'bpx-player-ctrl-playbackrate-unlogin-state',
+    titleSel: '.video-info-title h1.video-title'
   };
 
   const REAPPLY_EVENTS = ['loadedmetadata', 'loadeddata', 'canplay', 'play', 'seeked', 'durationchange', 'ratechange'];
@@ -25,7 +26,11 @@
     injected: false,
     video: null,
     desired: 1,
-    refs: null
+    defaultRate: 1,
+    refs: null,
+    title: '',
+    titleRules: [],
+    titleMatchEnabled: true
   };
 
   let closeTimer = null;
@@ -64,7 +69,7 @@
     if (state.refs && state.refs.result) state.refs.result.textContent = fmtShort(r);
   }
 
-  function apply(value) {
+  function apply(value, opts) {
     const r = round2(clamp(value));
     if (!isFinite(r)) return;
     state.desired = r;
@@ -74,7 +79,48 @@
     }
     syncUI(r);
     setResult(r);
-    persistRate(r);
+    if (!opts || opts.persist !== false) {
+      state.defaultRate = r;
+      persistRate(r);
+    }
+  }
+
+  function getVideoTitle() {
+    const el = q(CONFIG.titleSel);
+    if (el) {
+      const t = (el.getAttribute('data-title') || el.textContent || '').trim();
+      if (t) return t;
+    }
+    const fallback = (document.title || '')
+      .replace(/_+哔哩哔哩_+bilibili.*$/i, '')
+      .trim();
+    return fallback || '';
+  }
+
+  function matchRule(title) {
+    if (!state.titleMatchEnabled || !title) return null;
+    const t = title.toLowerCase();
+    let best = null;
+    for (const rule of state.titleRules) {
+      const kw = String(rule.keyword || '').trim().toLowerCase();
+      if (!kw || !t.includes(kw)) continue;
+      if (!best || kw.length > best.kwLen) best = { rule, kwLen: kw.length };
+    }
+    return best ? best.rule : null;
+  }
+
+  function applyTitleRule(force) {
+    const title = getVideoTitle();
+    if (!title) return;
+    if (!force && title === state.title) return;
+    const titleChanged = title !== state.title;
+    state.title = title;
+    const rule = matchRule(title);
+    if (rule) {
+      apply(rule.rate, { persist: false });
+    } else if (titleChanged || force) {
+      apply(state.defaultRate, { persist: false });
+    }
   }
 
   let rateSaveTimer = null;
@@ -266,6 +312,7 @@
         const r = round2(parseFloat(m[1]));
         if (Math.abs(r - state.desired) > 1e-3) {
           state.desired = r;
+          state.defaultRate = r;
           syncUI(r);
         }
       }).observe(state.refs.result, { childList: true, characterData: true, subtree: true });
@@ -326,7 +373,11 @@
     setResult(r);
     watchVideo();
     chrome.storage.sync.get({ rate: null }, data => {
-      if (data.rate != null) apply(data.rate);
+      if (data.rate != null) {
+        state.defaultRate = clamp(data.rate);
+        apply(state.defaultRate, { persist: false });
+      }
+      applyTitleRule(true);
     });
   }
 
@@ -344,8 +395,26 @@
       applySettings();
       if (!state.injected && q(CONFIG.containerSel)) init();
     });
+    chrome.storage.sync.get({ titleRules: [], titleMatchEnabled: true }, data => {
+      state.titleRules = Array.isArray(data.titleRules) ? data.titleRules : [];
+      state.titleMatchEnabled = data.titleMatchEnabled !== false;
+      applyTitleRule(true);
+    });
+    chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+      if (msg && msg.type === 'GET_VIDEO_INFO') {
+        sendResponse({ title: getVideoTitle(), rate: state.desired });
+      }
+    });
     chrome.storage.onChanged.addListener((changes, area) => {
       if (area !== 'sync') return;
+      if (changes.titleRules) {
+        state.titleRules = Array.isArray(changes.titleRules.newValue) ? changes.titleRules.newValue : [];
+        applyTitleRule(true);
+      }
+      if (changes.titleMatchEnabled) {
+        state.titleMatchEnabled = !!changes.titleMatchEnabled.newValue;
+        applyTitleRule(true);
+      }
       let dirty = false;
       Object.keys(DEFAULT_SETTINGS).forEach(k => {
         if (changes[k]) {
@@ -362,7 +431,7 @@
         if (q(CONFIG.containerSel)) init();
       }
     }).observe(document.body, { childList: true, subtree: true });
-    setInterval(watchVideo, 1500);
+    setInterval(() => { watchVideo(); applyTitleRule(); }, 1500);
   }
 
   start();
