@@ -79,38 +79,48 @@
   /* ===== 规则优先级拖拽 ===== */
   let rowDrag = null;
 
+  function endRowDrag() {
+    if (!rowDrag) return;
+    rowDrag.row.classList.remove('dragging');
+    rowDrag = null;
+  }
+
+  // 拖拽期间统一由 document 监听：DOM 重排（insertBefore）会隐式释放元素级指针捕获，
+  // 若仍依赖 handle 上的 pointerup 收尾，松开时会因事件落在其它元素上而残留拖拽状态。
+  document.addEventListener('pointermove', e => {
+    if (!rowDrag || rowDrag.pointerId !== e.pointerId) return;
+    e.preventDefault();
+    // 每次移动重新捕获，保证指针移出弹窗时事件流不断
+    try { rowDrag.handle.setPointerCapture(e.pointerId); } catch (err) {}
+    const y = e.clientY;
+    const target = [...rulesBox.querySelectorAll('.rule-row')].find(r => {
+      const rect = r.getBoundingClientRect();
+      return y >= rect.top && y <= rect.bottom;
+    });
+    if (!target || target === rowDrag.row) return;
+    const rect = target.getBoundingClientRect();
+    if (y < rect.top + rect.height / 2) {
+      if (target.previousElementSibling !== rowDrag.row) rulesBox.insertBefore(rowDrag.row, target);
+    } else {
+      if (target.nextElementSibling !== rowDrag.row) rulesBox.insertBefore(rowDrag.row, target.nextElementSibling);
+    }
+  });
+  document.addEventListener('pointerup', endRowDrag);
+  document.addEventListener('pointercancel', endRowDrag);
+  window.addEventListener('blur', endRowDrag);
+
   function attachRowDrag(row) {
     const handle = row.querySelector('.drag-handle');
     if (!handle) return;
     handle.addEventListener('pointerdown', e => {
       if (e.pointerType === 'mouse' && e.button !== 0) return;
       e.preventDefault();
-      handle.setPointerCapture(e.pointerId);
-      rowDrag = { row };
+      rowDrag = { row, handle, pointerId: e.pointerId };
       row.classList.add('dragging');
+      try { handle.setPointerCapture(e.pointerId); } catch (err) {}
     });
-    handle.addEventListener('pointermove', e => {
-      if (!rowDrag || rowDrag.row !== row) return;
-      const y = e.clientY;
-      const target = [...rulesBox.querySelectorAll('.rule-row')].find(r => {
-        const rect = r.getBoundingClientRect();
-        return y >= rect.top && y <= rect.bottom;
-      });
-      if (!target || target === row) return;
-      const rect = target.getBoundingClientRect();
-      if (y < rect.top + rect.height / 2) {
-        if (target.previousElementSibling !== row) rulesBox.insertBefore(row, target);
-      } else {
-        if (target.nextElementSibling !== row) rulesBox.insertBefore(row, target.nextElementSibling);
-      }
-    });
-    const endDrag = () => {
-      if (!rowDrag || rowDrag.row !== row) return;
-      row.classList.remove('dragging');
-      rowDrag = null;
-    };
-    handle.addEventListener('pointerup', endDrag);
-    handle.addEventListener('pointercancel', endDrag);
+    handle.addEventListener('pointerup', endRowDrag);
+    handle.addEventListener('pointercancel', endRowDrag);
     // 键盘上下键调整优先级
     handle.addEventListener('keydown', e => {
       if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
