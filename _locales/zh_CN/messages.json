@@ -1,8 +1,8 @@
 {
-  "extName": { "message": "BiliPace-B站倍速管家" },
+  "extName": { "message": "BiliPace - B站倍速管家" },
   "extDesc": { "message": "任意调节 Bilibili 播放倍速，支持按关键词为不同视频自动匹配不同倍速，无缝融入原生倍速面板" },
 
-  "appTitle": { "message": "BiliPace-B站倍速管家 · 设置" },
+  "appTitle": { "message": "BiliPace - B站倍速管家 · 设置" },
   "appSub": { "message": "无极调速 · 标题匹配 · 一键切换" },
   "logoAlt": { "message": "扩展图标" },
 
