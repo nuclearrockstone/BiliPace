@@ -1,6 +1,6 @@
 {
   "extName": { "message": "BiliPace" },
-  "extDesc": { "message": "Precisely adjust Bilibili playback speed with a custom fine-tuning panel that replaces the default speed menu" },
+  "extDesc": { "message": "Freely adjust Bilibili playback speed, auto-match different speeds for different videos by keyword, and blend seamlessly into the native speed menu" },
 
   "appTitle": { "message": "BiliPace · Settings" },
   "appSub": { "message": "Stepless speed · Title matching · One-click switching" },
