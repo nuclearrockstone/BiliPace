@@ -271,6 +271,38 @@ input[type="number"]::-webkit-inner-spin-button {
   text-align: center;
 }
 
+/* ===== 规则优先级拖拽把手（宽 2 圆点 × 高 3 圆点） ===== */
+.drag-handle {
+  flex: 0 0 14px;
+  width: 14px;
+  height: 20px;
+  display: block;
+  cursor: grab;
+  touch-action: none;
+  background-image: radial-gradient(circle, var(--text-hint) 1.2px, transparent 1.6px);
+  background-size: 7px 7px;
+  background-position: 0 0;
+}
+
+.drag-handle:hover {
+  background-image: radial-gradient(circle, var(--pink) 1.2px, transparent 1.6px);
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.drag-handle:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 1px;
+}
+
+.rule-row.dragging {
+  opacity: 0.45;
+  background: #f7f9fd;
+  box-shadow: 0 3px 10px rgba(29, 37, 71, 0.18);
+}
+
 /* ===== 删除按钮 ===== */
 .del {
   width: 26px;

@@ -100,13 +100,13 @@
   function matchRule(title) {
     if (!state.titleMatchEnabled || !title) return null;
     const t = title.toLowerCase();
-    let best = null;
+    // 按列表顺序匹配：越靠前的规则优先级越高，命中即返回
     for (const rule of state.titleRules) {
       const kw = String(rule.keyword || '').trim().toLowerCase();
       if (!kw || !t.includes(kw)) continue;
-      if (!best || kw.length > best.kwLen) best = { rule, kwLen: kw.length };
+      return rule;
     }
-    return best ? best.rule : null;
+    return null;
   }
 
   function applyTitleRule(force) {

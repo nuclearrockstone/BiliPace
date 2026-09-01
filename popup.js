@@ -76,10 +76,65 @@
     return out;
   }
 
+  /* ===== 规则优先级拖拽 ===== */
+  let rowDrag = null;
+
+  function attachRowDrag(row) {
+    const handle = row.querySelector('.drag-handle');
+    if (!handle) return;
+    handle.addEventListener('pointerdown', e => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      e.preventDefault();
+      handle.setPointerCapture(e.pointerId);
+      rowDrag = { row };
+      row.classList.add('dragging');
+    });
+    handle.addEventListener('pointermove', e => {
+      if (!rowDrag || rowDrag.row !== row) return;
+      const y = e.clientY;
+      const target = [...rulesBox.querySelectorAll('.rule-row')].find(r => {
+        const rect = r.getBoundingClientRect();
+        return y >= rect.top && y <= rect.bottom;
+      });
+      if (!target || target === row) return;
+      const rect = target.getBoundingClientRect();
+      if (y < rect.top + rect.height / 2) {
+        if (target.previousElementSibling !== row) rulesBox.insertBefore(row, target);
+      } else {
+        if (target.nextElementSibling !== row) rulesBox.insertBefore(row, target.nextElementSibling);
+      }
+    });
+    const endDrag = () => {
+      if (!rowDrag || rowDrag.row !== row) return;
+      row.classList.remove('dragging');
+      rowDrag = null;
+    };
+    handle.addEventListener('pointerup', endDrag);
+    handle.addEventListener('pointercancel', endDrag);
+    // 键盘上下键调整优先级
+    handle.addEventListener('keydown', e => {
+      if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+      e.preventDefault();
+      const dir = e.key === 'ArrowUp' ? -1 : 1;
+      const rows = [...rulesBox.querySelectorAll('.rule-row')];
+      const i = rows.indexOf(row);
+      const j = i + dir;
+      if (j < 0 || j >= rows.length) return;
+      if (dir < 0) rulesBox.insertBefore(row, rows[j]);
+      else rulesBox.insertBefore(rows[j], row);
+    });
+  }
+
   function makeRuleRow(rule) {
     const row = document.createElement('div');
     row.className = 'rule-row';
     row.dataset.id = rule.id;
+    const handle = document.createElement('span');
+    handle.className = 'drag-handle';
+    handle.title = '拖动调整优先级，越靠上优先级越高';
+    handle.setAttribute('role', 'button');
+    handle.setAttribute('aria-label', '拖动调整优先级');
+    handle.tabIndex = 0;
     const kw = document.createElement('input');
     kw.type = 'text';
     kw.className = 'rule-keyword';
@@ -97,7 +152,8 @@
     del.textContent = '✕';
     del.setAttribute('aria-label', '删除');
     del.addEventListener('click', () => row.remove());
-    row.append(kw, rate, del);
+    row.append(handle, kw, rate, del);
+    attachRowDrag(row);
     return row;
   }
 
