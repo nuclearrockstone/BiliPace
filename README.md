@@ -1,4 +1,4 @@
-# Bilibili倍速管家 (Bilibili Speed Master)
+# BiliPace-B站倍速管家 (BiliPace)
 
 > 无极精确调节 Bilibili 播放速度的浏览器扩展 / A browser extension for precise, stepless playback speed control on Bilibili.
 
@@ -6,7 +6,7 @@
   <b>中文</b> · <a href="#english">English</a>
 </p>
 
-Bilibili倍速管家是一个 Chrome / Edge (Manifest V3) 浏览器扩展,为 Bilibili 播放器提供**无极精确调节**的播放速度控制,用自定义微调面板直接替换 B 站原倍速菜单。支持**中英双语界面**,默认语言为简体中文,也可跟随浏览器语言或手动切换。
+BiliPace-B站倍速管家是一个 Chrome / Edge (Manifest V3) 浏览器扩展,为 Bilibili 播放器提供**无极精确调节**的播放速度控制,用自定义微调面板直接替换 B 站原倍速菜单。支持**中英双语界面**,默认语言为简体中文,也可跟随浏览器语言或手动切换。
 
 ---
 
@@ -105,7 +105,7 @@ BiliPlayRateFineTune/
 
 ## English
 
-**Bilibili Speed Master** is a Chrome / Edge (Manifest V3) browser extension that replaces Bilibili's default playback-speed menu with a custom panel offering **stepless, precise speed control**. The UI is fully **bilingual (Simplified Chinese / English)** and defaults to Simplified Chinese.
+**BiliPace** is a Chrome / Edge (Manifest V3) browser extension that replaces Bilibili's default playback-speed menu with a custom panel offering **stepless, precise speed control**. The UI is fully **bilingual (Simplified Chinese / English)** and defaults to Simplified Chinese.
 
 ### Features
 

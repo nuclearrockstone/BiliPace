@@ -1,5 +1,5 @@
 /**
- * Bilibili倍速管家 - 中英双语国际化核心
+ * BiliPace-B站倍速管家 - 中英双语国际化核心
  *
  * - 默认语言/地区:zh_CN(与 manifest 的 default_locale 一致)
  * - 语言解析优先级:用户手动选择(uiLanguage) > 浏览器界面语言 > 默认中文

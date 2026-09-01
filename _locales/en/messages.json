@@ -1,8 +1,8 @@
 {
-  "extName": { "message": "Bilibili Speed Master" },
+  "extName": { "message": "BiliPace" },
   "extDesc": { "message": "Precisely adjust Bilibili playback speed with a custom fine-tuning panel that replaces the default speed menu" },
 
-  "appTitle": { "message": "Bilibili Speed Master · Settings" },
+  "appTitle": { "message": "BiliPace · Settings" },
   "appSub": { "message": "Stepless speed · Title matching · One-click switching" },
   "logoAlt": { "message": "Extension icon" },
 
