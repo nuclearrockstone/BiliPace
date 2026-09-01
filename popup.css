@@ -1,4 +1,4 @@
-/* Bilibili 播放速度微调 - 简洁扁平 Popup（无圆角 / 无毛玻璃） */
+/* Bilibili倍速管家 - 简洁扁平 Popup（无圆角 / 无毛玻璃） */
 
 :root {
   /* 取自 icon128.png：深蓝底 + B站蓝 + 仪表盘粉 */
@@ -69,6 +69,35 @@ h1 {
   margin: 2px 0 0;
   font-size: 11px;
   color: var(--blue);
+}
+
+/* ===== 语言切换（顶栏右侧） ===== */
+.lang-wrap {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+#langSelect {
+  height: 26px;
+  max-width: 150px;
+  padding: 0 6px;
+  font-size: 11px;
+  font-family: inherit;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+}
+
+#langSelect:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+#langSelect option {
+  color: var(--text);
+  background: #fff;
 }
 
 main {

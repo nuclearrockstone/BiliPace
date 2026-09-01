@@ -1,0 +1,51 @@
+{
+  "extName": { "message": "Bilibili Speed Master" },
+  "extDesc": { "message": "Precisely adjust Bilibili playback speed with a custom fine-tuning panel that replaces the default speed menu" },
+
+  "appTitle": { "message": "Bilibili Speed Master · Settings" },
+  "appSub": { "message": "Stepless speed · Title matching · One-click switching" },
+  "logoAlt": { "message": "Extension icon" },
+
+  "panelRange": { "message": "Speed Range" },
+  "panelPresets": { "message": "Preset Speeds" },
+  "panelTitleMatch": { "message": "Title Speed Matching" },
+
+  "minSpeed": { "message": "Minimum Speed" },
+  "maxSpeed": { "message": "Maximum Speed" },
+  "sliderStep": { "message": "Slider Step" },
+  "fineStep": { "message": "Fine-tune Step" },
+  "decrease": { "message": "Decrease" },
+  "increase": { "message": "Increase" },
+
+  "addPreset": { "message": "Add Preset Speed" },
+  "enableTitleMatch": { "message": "Enable Title Matching" },
+  "titleMatchHint": { "message": "Auto-apply a speed when the video title contains a keyword; drag the handle to reorder (higher position = higher priority)" },
+  "addRule": { "message": "Keyword Rule" },
+  "autoAdd": { "message": "Auto Add Current Video" },
+
+  "save": { "message": "Save Settings" },
+  "reset": { "message": "Restore Defaults" },
+
+  "delete": { "message": "Delete" },
+  "dragHint": { "message": "Drag to reorder; higher position means higher priority" },
+  "dragLabel": { "message": "Reorder priority" },
+  "keywordPlaceholder": { "message": "Title keyword" },
+
+  "language": { "message": "Language" },
+  "langAuto": { "message": "Follow browser (default: Chinese)" },
+  "langZh": { "message": "中文" },
+  "langEn": { "message": "English" },
+
+  "statusSaved": { "message": "Saved" },
+  "statusReset": { "message": "Defaults restored" },
+  "errMinMax": { "message": "Minimum speed must be less than maximum speed" },
+  "errStep": { "message": "Step must be greater than 0" },
+  "errNoTab": { "message": "No active tab found" },
+  "errNoVideo": { "message": "This is not a Bilibili video page, or please refresh the page" },
+  "addedRule": { "message": "Added: $TITLE$ @ $RATE$x", "placeholders": { "title": { "content": "$1" }, "rate": { "content": "$2" } } },
+
+  "playbackSpeed": { "message": "Playback Speed" },
+  "decreaseSpeed": { "message": "Decrease Speed" },
+  "customRate": { "message": "Custom Speed" },
+  "increaseSpeed": { "message": "Increase Speed" }
+}
