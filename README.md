@@ -6,7 +6,7 @@
   <b>中文</b> · <a href="#english">English</a>
 </p>
 
-BiliPace-B站倍速管家是一个 Chrome / Edge (Manifest V3) 浏览器扩展,为 Bilibili 播放器提供**无极精确调节**的播放速度控制,用自定义微调面板直接替换 B 站原倍速菜单。支持**中英双语界面**,默认语言为简体中文,也可跟随浏览器语言或手动切换。
+BiliPace-B站倍速管家是一个 Chrome / Edge (Manifest V3) 浏览器扩展,为 Bilibili 播放器提供**无极精确调节**的播放速度控制,用自定义微调面板直接替换 B 站原倍速菜单。支持**中英双语界面**,自动跟随浏览器语言,默认简体中文。
 
 ---
 
@@ -32,7 +32,7 @@ BiliPace-B站倍速管家是一个 Chrome / Edge (Manifest V3) 浏览器扩展,�
 - **记忆倍速**:页面刷新或重新加载后自动恢复上次设置的播放速度
 - **标题倍速匹配**:根据视频标题关键词自动匹配对应倍速(可在设置中手动添加关键词规则,或一键把当前页面的标题+当前倍速存为规则);未命中规则时按记忆倍速处理
 - **保持同步**:监听 `ratechange` 等事件,外部改动(B 站快捷键等)与切换分P后自动同步
-- **中英双语**:界面支持简体中文 / English 双语,默认中文,可在设置面板右上角切换或跟随浏览器语言
+- **中英双语**:界面支持简体中文 / English 双语,按 Chrome 官方国际化规范自动跟随浏览器语言(默认中文)
 - **美观轻量**:小圆角半透明毛玻璃面板,契合 B 站粉色主题;未登录也可正常调速
 
 ## 安装
@@ -57,7 +57,6 @@ BiliPace-B站倍速管家是一个 Chrome / Edge (Manifest V3) 浏览器扩展,�
 | 常用倍速 | 面板底部的快捷预设(可增删行) | 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0 |
 | 标题匹配开关 | 是否启用标题关键词匹配倍速 | 开 |
 | 标题关键词规则 | 「关键词 + 倍速」列表,标题包含关键词时自动套用该倍速(可拖拽左侧把手调整优先级,越靠上优先级越高) | 空 |
-| 界面语言 | 中文 / English / 跟随浏览器(默认中文) | 跟随浏览器(默认中文) |
 
 ### 标题倍速匹配
 
@@ -68,11 +67,11 @@ BiliPace-B站倍速管家是一个 Chrome / Edge (Manifest V3) 浏览器扩展,�
 
 ### 语言设置
 
-扩展使用 Chrome 官方国际化机制(`_locales` + `chrome.i18n`):
+扩展遵循 Chrome 官方国际化最佳实践(`_locales` + `chrome.i18n`):
 
 - **默认地区/语言**:简体中文(`default_locale: zh_CN`)
-- 浏览器界面为中文时自动显示中文;为其他语言时自动显示英文
-- 也可在设置面板右上角下拉框中**手动切换**「中文 / English / 跟随浏览器」,选择会保存在 `chrome.storage.sync` 中,并同步作用于设置面板与播放器微调面板
+- 扩展自动跟随浏览器界面语言:浏览器为中文时显示中文,为其他语言时显示英文;未匹配的语言回退到 `zh_CN`
+- 无需手动配置语言,设置面板与播放器微调面板文案始终一致
 
 设置通过 `chrome.storage.sync` 保存,修改后会在已打开的页面上即时生效。
 
@@ -81,13 +80,12 @@ BiliPace-B站倍速管家是一个 Chrome / Edge (Manifest V3) 浏览器扩展,�
 ```
 BiliPlayRateFineTune/
 ├── manifest.json         # MV3 清单:default_locale、权限、图标、popup、内容脚本声明
-├── i18n.js               # 国际化核心:语言解析、文案翻译、语言切换
 ├── _locales/
 │   ├── zh_CN/messages.json  # 简体中文字典
 │   └── en/messages.json     # English dictionary
 ├── content.js            # 核心逻辑:替换倍速菜单、无极调速、记忆、标题匹配
 ├── styles.css            # 播放器微调面板样式
-├── popup.html            # 设置面板页面(含标题倍速匹配 UI、语言切换)
+├── popup.html            # 设置面板页面(含标题倍速匹配 UI)
 ├── popup.css             # 设置面板样式
 ├── popup.js              # 设置读写逻辑、标题规则管理、i18n 应用
 └── icon16/32/48/128.png  # 图标 PNG(manifest 使用)
@@ -99,7 +97,7 @@ BiliPlayRateFineTune/
 - 通过 `MutationObserver` 监听播放器容器,切换分P、页面内跳转后自动重新注入面板。
 - 倍速记忆存储在 `chrome.storage.sync` 的 `rate` 字段,与设置键分离,避免 `onChanged` 触发设置刷新造成循环。
 - 标题规则存储在 `chrome.storage.sync` 的 `titleRules` / `titleMatchEnabled` 字段;popup 通过 `chrome.tabs.sendMessage` 向内容脚本请求 `GET_VIDEO_INFO` 获取当前标题与倍速。
-- 国际化:popup 与 content script 均通过 `i18n.js` 的 `t()` 获取文案;manifest 使用 `__MSG_*__` 占位符;`default_locale: zh_CN` 保证中文为默认回退语言。
+- 国际化:遵循 Chrome 国际化最佳实践——manifest 使用 `__MSG_*__` 占位符,popup 与 content script 直接调用 `chrome.i18n.getMessage()`;`default_locale: zh_CN` 保证中文为默认回退语言。
 
 ---
 
@@ -116,7 +114,7 @@ BiliPlayRateFineTune/
 - **Remembers speed**: restores the last speed after refresh or reload
 - **Title-based speed matching**: auto-apply a speed when the video title contains a keyword (rules are editable, or add the current video with one click); falls back to the remembered speed when no rule matches
 - **Keeps in sync**: listens to `ratechange` and other events, so external changes (e.g. Bilibili hotkeys) and part switches stay in sync
-- **Bilingual UI**: Simplified Chinese / English, default Chinese; switch manually or follow the browser language
+- **Bilingual UI**: Simplified Chinese / English, following Chrome's official i18n best practices; automatically follows the browser language (default Chinese)
 - **Lightweight & pretty**: rounded translucent glassmorphism panel that matches Bilibili's pink theme; works even when not logged in
 
 ### Install
@@ -141,7 +139,6 @@ BiliPlayRateFineTune/
 | Preset Speeds | Quick presets at the bottom of the panel (add/remove rows) | 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0 |
 | Title Matching | Enable keyword-based speed matching | On |
 | Keyword Rules | "keyword + speed" list; drag the handle to reorder (higher = higher priority) | empty |
-| Language | 中文 / English / Follow browser (default Chinese) | Follow browser |
 
 ### Title Speed Matching
 
@@ -151,10 +148,11 @@ BiliPlayRateFineTune/
 
 ### Language
 
-Built on Chrome's official i18n mechanism (`_locales` + `chrome.i18n`):
+Built on Chrome's official i18n best practices (`_locales` + `chrome.i18n`):
 
 - **Default locale: `zh_CN`** (Simplified Chinese)
-- Follows the browser language automatically, and you can override it anytime via the dropdown in the top-right of the Settings popup. The choice is stored in `chrome.storage.sync` and applies to both the popup and the in-player panel.
+- The extension automatically follows the browser's UI language: Chinese browsers get Chinese, others get English; unmatched locales fall back to `zh_CN`
+- No manual configuration needed — the popup and the in-player panel always stay consistent
 
 All settings are saved via `chrome.storage.sync` and take effect on already-open pages immediately.
 
@@ -163,13 +161,12 @@ All settings are saved via `chrome.storage.sync` and take effect on already-open
 ```
 BiliPlayRateFineTune/
 ├── manifest.json         # MV3 manifest: default_locale, permissions, icons, popup, content scripts
-├── i18n.js               # i18n core: language resolution, translations, language switching
 ├── _locales/
 │   ├── zh_CN/messages.json  # Simplified Chinese dictionary
 │   └── en/messages.json     # English dictionary
 ├── content.js            # Core logic: replace speed menu, stepless control, memory, title matching
 ├── styles.css            # In-player panel styles
-├── popup.html            # Settings page (title matching UI, language switcher)
+├── popup.html            # Settings page (title matching UI)
 ├── popup.css             # Settings page styles
 ├── popup.js              # Settings read/write, rule management, i18n application
 └── icon16/32/48/128.png  # Icons (used by manifest)
@@ -181,4 +178,4 @@ BiliPlayRateFineTune/
 - A `MutationObserver` watches the player container and re-injects the panel after part switches or in-page navigation.
 - The remembered speed lives in the `rate` key of `chrome.storage.sync`, separate from settings keys to avoid `onChanged` feedback loops.
 - Title rules live in `titleRules` / `titleMatchEnabled`; the popup asks the content script for `GET_VIDEO_INFO` via `chrome.tabs.sendMessage`.
-- i18n: both popup and content script resolve strings through `i18n.js`'s `t()`; the manifest uses `__MSG_*__` placeholders; `default_locale: zh_CN` keeps Chinese as the fallback language.
+- i18n: follows Chrome's internationalization best practices — the manifest uses `__MSG_*__` placeholders, and both the popup and content script call `chrome.i18n.getMessage()` directly; `default_locale: zh_CN` keeps Chinese as the fallback language.

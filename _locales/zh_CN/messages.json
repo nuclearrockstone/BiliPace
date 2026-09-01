@@ -31,11 +31,6 @@
   "dragLabel": { "message": "拖动调整优先级" },
   "keywordPlaceholder": { "message": "标题关键词" },
 
-  "language": { "message": "界面语言" },
-  "langAuto": { "message": "跟随浏览器（默认中文）" },
-  "langZh": { "message": "中文" },
-  "langEn": { "message": "English" },
-
   "statusSaved": { "message": "已保存" },
   "statusReset": { "message": "已恢复默认" },
   "errMinMax": { "message": "最小速度需小于最大速度" },

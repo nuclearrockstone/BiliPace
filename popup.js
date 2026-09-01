@@ -1,8 +1,7 @@
 (() => {
   'use strict';
 
-  const I18N = window.BPRFT_I18N;
-  const t = (k, subs) => I18N.t(k, subs);
+  const t = (k, subs) => chrome.i18n.getMessage(k, subs) || k;
 
   const DEFAULTS = {
     min: 0.1,
@@ -215,6 +214,23 @@
     return isFinite(v) ? v : def;
   }
 
+  function translatePage() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      el.textContent = t(el.dataset.i18n);
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+      el.placeholder = t(el.dataset.i18nPlaceholder);
+    });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+      el.title = t(el.dataset.i18nTitle);
+    });
+    document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+      el.setAttribute('aria-label', t(el.dataset.i18nAria));
+    });
+    const title = t('appTitle');
+    if (title) document.title = title;
+  }
+
   let statusTimer = null;
   function showStatus(msg, err) {
     const s = $('status');
@@ -368,9 +384,8 @@
     });
   }
 
-  async function boot() {
-    await I18N.init();
-    I18N.applyToPage();
+  function boot() {
+    translatePage();
     bindActions();
     load();
   }

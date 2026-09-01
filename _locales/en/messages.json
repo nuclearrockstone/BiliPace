@@ -31,11 +31,6 @@
   "dragLabel": { "message": "Reorder priority" },
   "keywordPlaceholder": { "message": "Title keyword" },
 
-  "language": { "message": "Language" },
-  "langAuto": { "message": "Follow browser (default: Chinese)" },
-  "langZh": { "message": "中文" },
-  "langEn": { "message": "English" },
-
   "statusSaved": { "message": "Saved" },
   "statusReset": { "message": "Defaults restored" },
   "errMinMax": { "message": "Minimum speed must be less than maximum speed" },

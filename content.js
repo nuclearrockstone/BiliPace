@@ -1,8 +1,7 @@
 (() => {
   'use strict';
 
-  const I18N = window.BPRFT_I18N;
-  const t = (k, subs) => I18N.t(k, subs);
+  const t = (k, subs) => chrome.i18n.getMessage(k, subs) || k;
 
   const DEFAULT_SETTINGS = {
     min: 0.1,
@@ -385,13 +384,8 @@
   }
 
   function start() {
-    // 等待 i18n 初始化（含用户手动选择的语言），保证面板文案语言一致
-    I18N.init().then(run);
-  }
-
-  function run() {
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', run);
+      document.addEventListener('DOMContentLoaded', start);
       return;
     }
     document.addEventListener('mousemove', e => {

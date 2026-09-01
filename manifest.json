@@ -25,7 +25,7 @@
   "content_scripts": [
     {
       "matches": ["*://*.bilibili.com/*"],
-      "js": ["i18n.js", "content.js"],
+      "js": ["content.js"],
       "css": ["styles.css"],
       "run_at": "document_idle"
     }

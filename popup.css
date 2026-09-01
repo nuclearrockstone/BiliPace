@@ -40,8 +40,7 @@ body::-webkit-scrollbar {
   display: none;
 }
 
-/* ===== 顶栏（深蓝，呼应图标底色） ===== */
-.app-header {
+/* ===== 顶栏（深蓝，呼应图标底色） ===== */.app-header {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -69,35 +68,6 @@ h1 {
   margin: 2px 0 0;
   font-size: 11px;
   color: var(--blue);
-}
-
-/* ===== 语言切换（顶栏右侧） ===== */
-.lang-wrap {
-  margin-left: auto;
-  flex-shrink: 0;
-}
-
-#langSelect {
-  height: 26px;
-  max-width: 150px;
-  padding: 0 6px;
-  font-size: 11px;
-  font-family: inherit;
-  color: #fff;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  border-radius: 4px;
-  outline: none;
-  cursor: pointer;
-}
-
-#langSelect:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-#langSelect option {
-  color: var(--text);
-  background: #fff;
 }
 
 main {
