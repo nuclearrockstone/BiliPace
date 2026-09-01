@@ -1,0 +1,46 @@
+{
+  "extName": { "message": "BiliPace" },
+  "extDesc": { "message": "Freely adjust Bilibili playback speed, auto-match different speeds for different videos by keyword, and blend seamlessly into the native speed menu" },
+
+  "appTitle": { "message": "BiliPace · Settings" },
+  "appSub": { "message": "Stepless speed · Title matching · One-click switching" },
+  "logoAlt": { "message": "Extension icon" },
+
+  "panelRange": { "message": "Speed Range" },
+  "panelPresets": { "message": "Preset Speeds" },
+  "panelTitleMatch": { "message": "Title Speed Matching" },
+
+  "minSpeed": { "message": "Minimum Speed" },
+  "maxSpeed": { "message": "Maximum Speed" },
+  "sliderStep": { "message": "Slider Step" },
+  "fineStep": { "message": "Fine-tune Step" },
+  "decrease": { "message": "Decrease" },
+  "increase": { "message": "Increase" },
+
+  "addPreset": { "message": "Add Preset Speed" },
+  "enableTitleMatch": { "message": "Enable Title Matching" },
+  "titleMatchHint": { "message": "Auto-apply a speed when the video title contains a keyword; drag the handle to reorder (higher position = higher priority)" },
+  "addRule": { "message": "Keyword Rule" },
+  "autoAdd": { "message": "Auto Add Current Video" },
+
+  "save": { "message": "Save Settings" },
+  "reset": { "message": "Restore Defaults" },
+
+  "delete": { "message": "Delete" },
+  "dragHint": { "message": "Drag to reorder; higher position means higher priority" },
+  "dragLabel": { "message": "Reorder priority" },
+  "keywordPlaceholder": { "message": "Title keyword" },
+
+  "statusSaved": { "message": "Saved" },
+  "statusReset": { "message": "Defaults restored" },
+  "errMinMax": { "message": "Minimum speed must be less than maximum speed" },
+  "errStep": { "message": "Step must be greater than 0" },
+  "errNoTab": { "message": "No active tab found" },
+  "errNoVideo": { "message": "This is not a Bilibili video page, or please refresh the page" },
+  "addedRule": { "message": "Added: $TITLE$ @ $RATE$x", "placeholders": { "title": { "content": "$1" }, "rate": { "content": "$2" } } },
+
+  "playbackSpeed": { "message": "Playback Speed" },
+  "decreaseSpeed": { "message": "Decrease Speed" },
+  "customRate": { "message": "Custom Speed" },
+  "increaseSpeed": { "message": "Increase Speed" }
+}

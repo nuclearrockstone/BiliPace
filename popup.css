@@ -1,4 +1,4 @@
-/* Bilibili 播放速度微调 - 简洁扁平 Popup（无圆角 / 无毛玻璃） */
+/* BiliPace-B站倍速管家 - 简洁扁平 Popup（无圆角 / 无毛玻璃） */
 
 :root {
   /* 取自 icon128.png：深蓝底 + B站蓝 + 仪表盘粉 */
@@ -40,8 +40,7 @@ body::-webkit-scrollbar {
   display: none;
 }
 
-/* ===== 顶栏（深蓝，呼应图标底色） ===== */
-.app-header {
+/* ===== 顶栏（深蓝，呼应图标底色） ===== */.app-header {
   display: flex;
   align-items: center;
   gap: 12px;

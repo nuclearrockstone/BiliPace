@@ -1,6 +1,8 @@
 (() => {
   'use strict';
 
+  const t = (k, subs) => chrome.i18n.getMessage(k, subs) || k;
+
   const DEFAULT_SETTINGS = {
     min: 0.1,
     max: 4,
@@ -231,7 +233,7 @@
     value.className = 'bprft-value';
     const label = document.createElement('div');
     label.className = 'bprft-label';
-    label.textContent = '播放速度';
+    label.textContent = t('playbackSpeed');
     display.append(value, label);
 
     const slider = document.createElement('input');
@@ -240,7 +242,7 @@
     slider.min = CONFIG.min;
     slider.max = CONFIG.max;
     slider.step = CONFIG.step;
-    slider.setAttribute('aria-label', '播放速度');
+    slider.setAttribute('aria-label', t('playbackSpeed'));
 
     const row = document.createElement('div');
     row.className = 'bprft-row';
@@ -248,19 +250,19 @@
     minus.type = 'button';
     minus.className = 'bprft-btn';
     minus.textContent = '−';
-    minus.setAttribute('aria-label', '降低速度');
+    minus.setAttribute('aria-label', t('decreaseSpeed'));
     const input = document.createElement('input');
     input.type = 'number';
     input.className = 'bprft-input';
     input.min = CONFIG.min;
     input.max = CONFIG.max;
     input.step = CONFIG.step;
-    input.setAttribute('aria-label', '自定义倍速');
+    input.setAttribute('aria-label', t('customRate'));
     const plus = document.createElement('button');
     plus.type = 'button';
     plus.className = 'bprft-btn';
     plus.textContent = '+';
-    plus.setAttribute('aria-label', '提高速度');
+    plus.setAttribute('aria-label', t('increaseSpeed'));
     row.append(minus, input, plus);
 
     const presetsWrap = document.createElement('div');

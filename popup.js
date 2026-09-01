@@ -1,6 +1,8 @@
 (() => {
   'use strict';
 
+  const t = (k, subs) => chrome.i18n.getMessage(k, subs) || k;
+
   const DEFAULTS = {
     min: 0.1,
     max: 4,
@@ -44,7 +46,7 @@
     del.type = 'button';
     del.className = 'del';
     del.textContent = '✕';
-    del.setAttribute('aria-label', '删除');
+    del.setAttribute('aria-label', t('delete'));
     del.addEventListener('click', () => row.remove());
     row.append(input, del);
     return row;
@@ -141,15 +143,15 @@
     row.dataset.id = rule.id;
     const handle = document.createElement('span');
     handle.className = 'drag-handle';
-    handle.title = '拖动调整优先级，越靠上优先级越高';
+    handle.title = t('dragHint');
     handle.setAttribute('role', 'button');
-    handle.setAttribute('aria-label', '拖动调整优先级');
+    handle.setAttribute('aria-label', t('dragLabel'));
     handle.tabIndex = 0;
     const kw = document.createElement('input');
     kw.type = 'text';
     kw.className = 'rule-keyword';
     kw.value = rule.keyword;
-    kw.placeholder = '标题关键词';
+    kw.placeholder = t('keywordPlaceholder');
     const rate = document.createElement('input');
     rate.type = 'number';
     rate.className = 'rule-rate';
@@ -160,7 +162,7 @@
     del.type = 'button';
     del.className = 'del';
     del.textContent = '✕';
-    del.setAttribute('aria-label', '删除');
+    del.setAttribute('aria-label', t('delete'));
     del.addEventListener('click', () => row.remove());
     row.append(handle, kw, rate, del);
     attachRowDrag(row);
@@ -212,6 +214,23 @@
     return isFinite(v) ? v : def;
   }
 
+  function translatePage() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      el.textContent = t(el.dataset.i18n);
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+      el.placeholder = t(el.dataset.i18nPlaceholder);
+    });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+      el.title = t(el.dataset.i18nTitle);
+    });
+    document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+      el.setAttribute('aria-label', t(el.dataset.i18nAria));
+    });
+    const title = t('appTitle');
+    if (title) document.title = title;
+  }
+
   let statusTimer = null;
   function showStatus(msg, err) {
     const s = $('status');
@@ -246,14 +265,14 @@
       titleMatchEnabled: $('titleMatchEnabled').checked
     };
     if (data.min >= data.max) {
-      showStatus('最小速度需小于最大速度', true);
+      showStatus(t('errMinMax'), true);
       return;
     }
     if (data.step <= 0 || data.fineStep <= 0) {
-      showStatus('步长需大于 0', true);
+      showStatus(t('errStep'), true);
       return;
     }
-    chrome.storage.sync.set(data, () => showStatus('已保存'));
+    chrome.storage.sync.set(data, () => showStatus(t('statusSaved')));
     renderPresetRows(data.presets);
     renderRuleRows(data.titleRules);
   }
@@ -262,18 +281,18 @@
     chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
       const tab = tabs && tabs[0];
       if (!tab || tab.id == null) {
-        showStatus('未找到当前标签页', true);
+        showStatus(t('errNoTab'), true);
         return;
       }
       chrome.tabs.sendMessage(tab.id, { type: 'GET_VIDEO_INFO' }, resp => {
         if (chrome.runtime.lastError || !resp || !resp.title) {
-          showStatus('当前页面不是 B 站视频页,或请先刷新页面', true);
+          showStatus(t('errNoVideo'), true);
           return;
         }
         const title = String(resp.title).trim();
         const rate = Math.round((+resp.rate || 1) * 100) / 100;
         upsertRule(title, rate);
-        showStatus('已添加:' + title + ' @ ' + rate + 'x');
+        showStatus(t('addedRule', [title, rate]));
       });
     });
   }
@@ -348,20 +367,28 @@
     });
   });
 
-  $('save').addEventListener('click', save);
-  $('addPreset').addEventListener('click', () => presetsBox.appendChild(makeRow(DEFAULTS.presets[0])));
-  $('addTitleRule').addEventListener('click', () => {
-    const row = makeRuleRow({ id: uid(), keyword: '', rate: 1 });
-    rulesBox.appendChild(row);
-    row.querySelector('.rule-keyword').focus();
-  });
-  $('autoAddTitle').addEventListener('click', autoAddTitle);
-  $('reset').addEventListener('click', () => {
-    chrome.storage.sync.set(DEFAULTS, () => {
-      load();
-      showStatus('已恢复默认');
+  function bindActions() {
+    $('save').addEventListener('click', save);
+    $('addPreset').addEventListener('click', () => presetsBox.appendChild(makeRow(DEFAULTS.presets[0])));
+    $('addTitleRule').addEventListener('click', () => {
+      const row = makeRuleRow({ id: uid(), keyword: '', rate: 1 });
+      rulesBox.appendChild(row);
+      row.querySelector('.rule-keyword').focus();
     });
-  });
+    $('autoAddTitle').addEventListener('click', autoAddTitle);
+    $('reset').addEventListener('click', () => {
+      chrome.storage.sync.set(DEFAULTS, () => {
+        load();
+        showStatus(t('statusReset'));
+      });
+    });
+  }
 
-  load();
+  function boot() {
+    translatePage();
+    bindActions();
+    load();
+  }
+
+  boot();
 })();

@@ -1,0 +1,46 @@
+{
+  "extName": { "message": "BiliPace-B站倍速管家" },
+  "extDesc": { "message": "任意调节 Bilibili 播放倍速，支持按关键词为不同视频自动匹配不同倍速，无缝融入原生倍速面板" },
+
+  "appTitle": { "message": "BiliPace-B站倍速管家 · 设置" },
+  "appSub": { "message": "无极调速 · 标题匹配 · 一键切换" },
+  "logoAlt": { "message": "扩展图标" },
+
+  "panelRange": { "message": "调节范围" },
+  "panelPresets": { "message": "常用倍速" },
+  "panelTitleMatch": { "message": "标题倍速匹配" },
+
+  "minSpeed": { "message": "最小速度" },
+  "maxSpeed": { "message": "最大速度" },
+  "sliderStep": { "message": "滑块步进" },
+  "fineStep": { "message": "微调步长" },
+  "decrease": { "message": "减少" },
+  "increase": { "message": "增加" },
+
+  "addPreset": { "message": "添加常用倍速" },
+  "enableTitleMatch": { "message": "启用标题匹配" },
+  "titleMatchHint": { "message": "视频标题含关键词时自动套用对应倍速；拖拽左侧把手调整优先级，越靠上优先级越高" },
+  "addRule": { "message": "关键词规则" },
+  "autoAdd": { "message": "自动添加当前视频" },
+
+  "save": { "message": "保存设置" },
+  "reset": { "message": "恢复默认" },
+
+  "delete": { "message": "删除" },
+  "dragHint": { "message": "拖动调整优先级，越靠上优先级越高" },
+  "dragLabel": { "message": "拖动调整优先级" },
+  "keywordPlaceholder": { "message": "标题关键词" },
+
+  "statusSaved": { "message": "已保存" },
+  "statusReset": { "message": "已恢复默认" },
+  "errMinMax": { "message": "最小速度需小于最大速度" },
+  "errStep": { "message": "步长需大于 0" },
+  "errNoTab": { "message": "未找到当前标签页" },
+  "errNoVideo": { "message": "当前页面不是 B 站视频页，或请先刷新页面" },
+  "addedRule": { "message": "已添加：$TITLE$ @ $RATE$x", "placeholders": { "title": { "content": "$1" }, "rate": { "content": "$2" } } },
+
+  "playbackSpeed": { "message": "播放速度" },
+  "decreaseSpeed": { "message": "降低速度" },
+  "customRate": { "message": "自定义倍速" },
+  "increaseSpeed": { "message": "提高速度" }
+}
