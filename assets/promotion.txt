@@ -1,0 +1,41 @@
+🎬 BiliPace｜B站倍速管家
+
+专为 Bilibili 设计的无极调速扩展，让每个视频的播放节奏都尽在掌握。
+
+⚡ 无极调速
+1.5 倍嫌慢？2.0 倍太快？无极调速，想多快就多快！支持拖动滑块、输入精确数值或点击加减按钮等多种方式灵活调整倍速，随心所欲，自在掌控。
+
+🎯 规则匹配
+学习想快？听歌要慢？规则匹配，让每个视频都有自己的速度！为包含不同关键词的视频设置不同倍速，例如「教程」2 倍速、「歌曲」1 倍速，根据内容自动匹配，无缝切换。
+
+✨ 无缝融合
+不想来回切换？无缝融合，一样的位置，一样的味道。扩展无缝融入 Bilibili 播放器原有控制面板，操作习惯无需改变，丝滑一体，浑然天成。
+
+🚀 更多实用功能
+支持常用倍速一键切换，支持拖拽调整关键词优先级，并可灵活设置倍速范围与步进大小。
+
+🔓 完全开源
+项目完全开源，代码透明，放心使用。
+
+BiliPace，你的节奏，你来掌握！
+
+🎬 BiliPace｜Bilibili Playback Speed Manager
+
+A playback speed extension designed specifically for Bilibili, giving you precise control over the pace of every video.
+
+⚡ Fine-Grained Speed Control
+1.5× too slow? 2.0× too fast? Set exactly the speed you want! Adjust playback speed effortlessly with a slider, precise numeric input, or increment and decrement buttons.
+
+🎯 Rule-Based Speed Matching
+Want to speed up tutorials but slow down music? Set different playback speeds for videos containing specific keywords. For example, play "Tutorial" videos at 2× and "Music" videos at 1×, with speeds applied automatically.
+
+✨ Seamless Integration
+No need to switch between interfaces. BiliPace seamlessly integrates into Bilibili’s native player controls, keeping everything right where you expect it.
+
+🚀 More Useful Features
+Quickly switch between commonly used speeds, drag to adjust keyword priority, and freely customize the supported speed range and step size.
+
+🔓 Fully Open Source
+The project is completely open source, with transparent code for a trustworthy experience.
+
+BiliPace — Your pace, your control!
