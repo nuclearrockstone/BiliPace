@@ -1,6 +1,15 @@
-# BiliPace — Bilibili Playback Speed Manager
+<p align="center">
+  <img src="icon128.png" alt="BiliPace icon" width="110"/>
+</p>
 
-> A playback speed extension designed specifically for Bilibili, giving you precise control over the pace of every video.
+<h1 align="center">BiliPace — Bilibili Playback Speed Manager</h1>
+
+<p align="center">
+  <a href="https://microsoftedge.microsoft.com/addons/detail/bilipace-b%E7%AB%99%E5%80%8D%E9%80%9F%E7%AE%A1%E5%AE%B6/fcdfmgpfnbcbbjpopaggakdlfnkhjpbc"><img alt="Edge Add-ons - Install" src="https://img.shields.io/badge/Edge%20Add--ons-Install-0078D7"/></a>
+  <a href="https://chromewebstore.google.com/detail/bilipace-b%E7%AB%99%E5%80%8D%E9%80%9F%E7%AE%A1%E5%AE%B6/jladjpcgejlgoifofnonpinadilbdjib"><img alt="Chrome Web Store - Install" src="https://img.shields.io/badge/Chrome%20Web%20Store-Install-4285F4?logo=googlechrome&logoColor=white"/></a>
+</p>
+
+<p align="center"><em>A playback speed extension designed specifically for Bilibili, giving you precise control over the pace of every video.</em></p>
 
 <p align="center">
   <a href="./README.md">简体中文</a> · <b>English</b>
@@ -21,7 +30,7 @@ BiliPace is a Chrome / Edge (Manifest V3) browser extension built specifically f
 - [Usage](#usage)
 - [Title Speed Matching](#title-speed-matching)
 - [File Structure](#file-structure)
-- [Technical Notes](#technical-notes)
+- [License](#license)
 
 ---
 
@@ -77,10 +86,22 @@ The project is completely open source, with transparent code for a trustworthy e
 
 ## Install
 
-1. Open `chrome://extensions` (or `edge://extensions`)
-2. Enable **Developer mode** (top-right)
-3. Click **Load unpacked** and select this project's root folder
-4. Open any Bilibili video page and hover the speed button (bottom-right) to use the panel
+### 🛒 Install from the Web Store (Recommended)
+
+BiliPace is now available on the major extension stores — click below to install in one click:
+
+- **[Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/bilipace-b%E7%AB%99%E5%80%8D%E9%80%9F%E7%AE%A1%E5%AE%B6/fcdfmgpfnbcbbjpopaggakdlfnkhjpbc)**: for Microsoft Edge
+- **[Chrome Web Store](https://chromewebstore.google.com/detail/bilipace-b%E7%AB%99%E5%80%8D%E9%80%9F%E7%AE%A1%E5%AE%B6/jladjpcgejlgoifofnonpinadilbdjib)**: for Google Chrome / other Chromium-based browsers
+
+### 🧰 Manual Installation (Developer Mode)
+
+To install from source manually, follow these steps:
+
+1. Download or clone this project to your machine
+2. Open `chrome://extensions` (or `edge://extensions`)
+3. Enable **Developer mode** (top-right)
+4. Click **Load unpacked** and select this project's root folder
+5. Open any Bilibili video page and hover the speed button (bottom-right) to use the panel
 
 ## Usage
 
@@ -122,13 +143,13 @@ BiliPlayRateFineTune/
 └── assets/               # README artwork (main poster, speed control, rule matching, seamless integration)
 ```
 
-## Technical Notes
+## License
 
-- The original speed menu is driven by Bilibili's front-end (container `.bpx-player-ctrl-playbackrate`; clicking `li[data-value]` calls the internal `settingStore.setPlaybackRate()`). This extension does **not** depend on Bilibili's internal store; it sets `<video>.playbackRate` directly for stepless control.
-- A `MutationObserver` watches the player container and re-injects the panel after part switches or in-page navigation.
-- The remembered speed lives in the `rate` key of `chrome.storage.sync`, separate from settings keys to avoid `onChanged` feedback loops.
-- Title rules live in `titleRules` / `titleMatchEnabled`; the popup asks the content script for `GET_VIDEO_INFO` via `chrome.tabs.sendMessage`.
-- i18n follows Chrome's internationalization best practices: the manifest uses `__MSG_*__` placeholders, and both the popup and content script call `chrome.i18n.getMessage()` directly; message dictionaries live in `_locales/` (`default_locale: zh_CN`).
+This project is released under the [MIT License](LICENSE): you are free to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the software, provided that the above copyright notice and this permission notice are preserved.
+
+**Copyright (c) 2026 nulearrockstone**
+
+See the [LICENSE](LICENSE) file for the full license text.
 
 ---
 

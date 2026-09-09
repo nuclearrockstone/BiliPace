@@ -1,6 +1,15 @@
-# BiliPace-B站倍速管家
+<p align="center">
+  <img src="icon128.png" alt="BiliPace-B站倍速管家 图标" width="110"/>
+</p>
 
-> 专为 Bilibili 设计的无极调速扩展,让每个视频的播放节奏都尽在掌握。
+<h1 align="center">BiliPace-B站倍速管家</h1>
+
+<p align="center">
+  <a href="https://microsoftedge.microsoft.com/addons/detail/bilipace-b%E7%AB%99%E5%80%8D%E9%80%9F%E7%AE%A1%E5%AE%B6/fcdfmgpfnbcbbjpopaggakdlfnkhjpbc"><img alt="Edge 扩展商店 - 一键安装" src="https://img.shields.io/badge/Edge%E6%89%A9%E5%B1%95%E5%95%86%E5%BA%97-%E4%B8%80%E9%94%AE%E5%AE%89%E8%A3%85-0078D7"/></a>
+  <a href="https://chromewebstore.google.com/detail/bilipace-b%E7%AB%99%E5%80%8D%E9%80%9F%E7%AE%A1%E5%AE%B6/jladjpcgejlgoifofnonpinadilbdjib"><img alt="Chrome 应用商店 - 一键安装" src="https://img.shields.io/badge/Chrome%E5%BA%94%E7%94%A8%E5%95%86%E5%BA%97-%E4%B8%80%E9%94%AE%E5%AE%89%E8%A3%85-4285F4?logo=googlechrome&logoColor=white"/></a>
+</p>
+
+<p align="center"><em>专为 Bilibili 设计的无极调速扩展,让每个视频的播放节奏都尽在掌握。</em></p>
 
 <p align="center">
   <b>简体中文</b> · <a href="./README.en.md">English</a>
@@ -21,7 +30,7 @@ BiliPace-B站倍速管家是一个 Chrome / Edge (Manifest V3) 浏览器扩展,�
 - [使用说明](#使用说明)
 - [标题倍速匹配](#标题倍速匹配)
 - [文件结构](#文件结构)
-- [技术说明](#技术说明)
+- [许可证](#许可证)
 
 ---
 
@@ -77,10 +86,22 @@ BiliPace-B站倍速管家是一个 Chrome / Edge (Manifest V3) 浏览器扩展,�
 
 ## 安装
 
-1. 打开 `chrome://extensions`(Edge 为 `edge://extensions`)
-2. 开启右上角「开发者模式」
-3. 点击「加载已解压的扩展程序」,选择本项目根目录
-4. 打开任意 B 站视频页面,悬停右下角「倍速」按钮即可使用微调面板
+### 🛒 应用商店安装(推荐)
+
+BiliPace 现已上架主流浏览器扩展商店,点击下方链接即可一键安装:
+
+- **[Edge 扩展商店](https://microsoftedge.microsoft.com/addons/detail/bilipace-b%E7%AB%99%E5%80%8D%E9%80%9F%E7%AE%A1%E5%AE%B6/fcdfmgpfnbcbbjpopaggakdlfnkhjpbc)**:适用于 Microsoft Edge
+- **[Chrome 应用商店](https://chromewebstore.google.com/detail/bilipace-b%E7%AB%99%E5%80%8D%E9%80%9F%E7%AE%A1%E5%AE%B6/jladjpcgejlgoifofnonpinadilbdjib)**:适用于 Google Chrome / 其他 Chromium 系浏览器
+
+### 🧰 手动安装(开发者模式)
+
+如需从源码手动安装,请按以下步骤操作:
+
+1. 下载或克隆本项目到本地
+2. 打开 `chrome://extensions`(Edge 为 `edge://extensions`)
+3. 开启右上角「开发者模式」
+4. 点击「加载已解压的扩展程序」,选择本项目根目录
+5. 打开任意 B 站视频页面,悬停右下角「倍速」按钮即可使用微调面板
 
 ## 使用说明
 
@@ -123,13 +144,13 @@ BiliPlayRateFineTune/
 └── assets/               # README 宣传图(主海报、无极调速、规则匹配、无缝融合)
 ```
 
-## 技术说明
+## 许可证
 
-- 原倍速菜单由 B 站前端控制(容器 `.bpx-player-ctrl-playbackrate`,点击 `li[data-value]` 调用内部 `settingStore.setPlaybackRate()`)。本扩展**不依赖** B 站内部 store,而是直接设置 `<video>.playbackRate` 实现无极调速。
-- 通过 `MutationObserver` 监听播放器容器,切换分P、页面内跳转后自动重新注入面板。
-- 倍速记忆存储在 `chrome.storage.sync` 的 `rate` 字段,与设置键分离,避免 `onChanged` 触发设置刷新造成循环。
-- 标题规则存储在 `chrome.storage.sync` 的 `titleRules` / `titleMatchEnabled` 字段;popup 通过 `chrome.tabs.sendMessage` 向内容脚本请求 `GET_VIDEO_INFO` 获取当前标题与倍速。
-- 国际化遵循 Chrome 国际化最佳实践:manifest 使用 `__MSG_*__` 占位符,popup 与 content script 直接调用 `chrome.i18n.getMessage()`,文案字典位于 `_locales/`(`default_locale: zh_CN`)。
+本项目基于 [MIT License](LICENSE) 开源发布:你可以自由地使用、复制、修改、合并、发布、分发、再许可及/或销售本软件的副本,唯一的条件是必须保留上述版权声明与本许可声明。
+
+**Copyright (c) 2026 nulearrockstone**
+
+完整许可条款见 [LICENSE](LICENSE) 文件。
 
 ---
 
