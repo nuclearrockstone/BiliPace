@@ -40,6 +40,7 @@
   "addedRule": { "message": "Added: $TITLE$ @ $RATE$x", "placeholders": { "title": { "content": "$1" }, "rate": { "content": "$2" } } },
 
   "playbackSpeed": { "message": "Playback Speed" },
+  "speedPlaybackActive": { "message": "Speed Playing" },
   "decreaseSpeed": { "message": "Decrease Speed" },
   "customRate": { "message": "Custom Speed" },
   "increaseSpeed": { "message": "Increase Speed" }

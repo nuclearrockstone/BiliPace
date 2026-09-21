@@ -40,6 +40,7 @@
   "addedRule": { "message": "已添加：$TITLE$ @ $RATE$x", "placeholders": { "title": { "content": "$1" }, "rate": { "content": "$2" } } },
 
   "playbackSpeed": { "message": "播放速度" },
+  "speedPlaybackActive": { "message": "倍速播放中" },
   "decreaseSpeed": { "message": "降低速度" },
   "customRate": { "message": "自定义倍速" },
   "increaseSpeed": { "message": "提高速度" }
