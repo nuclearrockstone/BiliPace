@@ -128,6 +128,34 @@ const blurred = await snap();
 await page.keyboard.up('ArrowRight');
 check('blur cancels boost', !blurred.hintShown && Math.abs(blurred.rate - 1) < 1e-3, blurred);
 
+// popup smoke test: modules load, page renders, assets resolve
+{
+  const popErrors = [];
+  const extPage = await ctx.newPage();
+  extPage.on('pageerror', e => popErrors.push(String(e)));
+  extPage.on('console', m => { if (m.type() === 'error') popErrors.push(m.text()); });
+  await extPage.goto('chrome://extensions/', { waitUntil: 'domcontentloaded' });
+  await extPage.waitForTimeout(1000);
+  const extId = await extPage.evaluate(() => {
+    const list = document.querySelector('extensions-manager')?.shadowRoot
+      ?.querySelector('extensions-item-list')?.shadowRoot?.querySelector('extensions-item');
+    return list ? list.id : null;
+  });
+  await extPage.goto(`chrome-extension://${extId}/src/popup/popup.html`, { waitUntil: 'domcontentloaded' });
+  await extPage.waitForTimeout(800);
+  const popup = await extPage.evaluate(() => ({
+    title: document.title,
+    min: document.getElementById('min')?.value,
+    presetRows: document.querySelectorAll('#presets .preset-row').length,
+    hasSave: !!document.getElementById('save'),
+    logoLoaded: (() => { const i = document.querySelector('img.logo'); return i ? i.complete && i.naturalWidth > 0 : false; })(),
+  }));
+  check('popup: title localized', /BiliPace/.test(popup.title || ''), popup);
+  check('popup: preset rows rendered', popup.presetRows > 0, popup);
+  check('popup: icon asset resolves', popup.logoLoaded, popup);
+  check('popup: no console/page errors', popErrors.length === 0, { errors: popErrors });
+}
+
 console.log(failed ? `\n${failed} check(s) FAILED` : '\nAll checks passed');
 await ctx.close();
 process.exit(failed ? 1 : 0);

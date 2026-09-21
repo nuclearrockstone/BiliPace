@@ -201,7 +201,7 @@
 
 /* ---- 长按右方向键加速：复用 B 站原生倍速提示 UI ---- */
 /*
- * 提示节点由 content.js 按原生结构创建（.bpx-player-three-playrate-hint-loop），
+ * 提示节点由 boost.js 按原生结构创建（.bpx-player-three-playrate-hint-loop），
  * 样式全部来自 B 站播放器自带的 CSS，这里不再覆盖任何尺寸/间距，
  * 避免数字与轮播错位。
  */

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="icon128.png" alt="BiliPace icon" width="110"/>
+  <img src="icons/icon128.png" alt="BiliPace icon" width="110"/>
 </p>
 
 <h1 align="center">BiliPace — Bilibili Playback Speed Manager</h1>
@@ -130,17 +130,25 @@ All settings are saved via `chrome.storage.sync` and take effect on already-open
 
 ```
 BiliPlayRateFineTune/
-├── manifest.json         # MV3 manifest: default_locale, permissions, icons, popup, content scripts
-├── _locales/
-│   ├── zh_CN/messages.json  # Simplified Chinese dictionary
-│   └── en/messages.json     # English dictionary
-├── content.js            # Core logic: replace speed menu, stepless control, memory, title matching
-├── styles.css            # In-player panel styles
-├── popup.html            # Settings page (title matching UI)
-├── popup.css             # Settings page styles
-├── popup.js              # Settings read/write, rule management
-├── icon16/32/48/128.png  # Icons (used by manifest)
-└── assets/               # README artwork (main poster, speed control, rule matching, seamless integration)
+├── manifest.json            # MV3 manifest: permissions, icons, popup, content scripts
+├── _locales/                # i18n dictionaries (zh_CN / en)
+├── icons/                   # Icon PNGs (used by manifest)
+├── assets/                  # README artwork and copy
+├── src/
+│   ├── content/             # Content scripts (injected in order, sharing window.BPRFT)
+│   │   ├── config.js        # Constants, CONFIG, shared state
+│   │   ├── utils.js         # i18n, number formatting, DOM query
+│   │   ├── video.js         # Video element and playback-rate apply/persist
+│   │   ├── ui.js            # In-player panel UI
+│   │   ├── title.js         # Title keyword matching
+│   │   ├── boost.js         # Hold-→ boost + native hint
+│   │   ├── main.js          # Entry: init and settings listeners
+│   │   └── content.css      # In-player panel styles
+│   └── popup/               # Settings page (ES Modules)
+│       ├── popup.html
+│       ├── popup.css
+│       └── js/              # i18n / config / dom / storage / presets / rules / stepper / panels
+└── tools/e2e.mjs            # Playwright end-to-end test
 ```
 
 ## License

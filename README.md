@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="icon128.png" alt="BiliPace-B站倍速管家 图标" width="110"/>
+  <img src="icons/icon128.png" alt="BiliPace-B站倍速管家 图标" width="110"/>
 </p>
 
 <h1 align="center">BiliPace-B站倍速管家</h1>
@@ -131,17 +131,25 @@ BiliPace 现已上架主流浏览器扩展商店,点击下方链接即可一键�
 
 ```
 BiliPlayRateFineTune/
-├── manifest.json         # MV3 清单:default_locale、权限、图标、popup、内容脚本声明
-├── _locales/
-│   ├── zh_CN/messages.json  # 简体中文字典
-│   └── en/messages.json     # English dictionary
-├── content.js            # 核心逻辑:替换倍速菜单、无极调速、记忆、标题匹配
-├── styles.css            # 播放器微调面板样式
-├── popup.html            # 设置面板页面(含标题倍速匹配 UI)
-├── popup.css             # 设置面板样式
-├── popup.js              # 设置读写逻辑、标题规则管理
-├── icon16/32/48/128.png  # 图标 PNG(manifest 使用)
-└── assets/               # README 宣传图(主海报、无极调速、规则匹配、无缝融合)
+├── manifest.json            # MV3 清单:权限、图标、popup、内容脚本声明
+├── _locales/                # 国际化字典(zh_CN / en)
+├── icons/                   # 图标 PNG(manifest 使用)
+├── assets/                  # README 宣传图与文案
+├── src/
+│   ├── content/             # 内容脚本(按 manifest 顺序注入,共享 window.BPRFT 命名空间)
+│   │   ├── config.js        # 常量、CONFIG、共享 state
+│   │   ├── utils.js         # i18n、数值格式化、DOM 查询
+│   │   ├── video.js         # 视频元素与倍速应用/持久化
+│   │   ├── ui.js            # 播放器面板 UI
+│   │   ├── title.js         # 标题关键词匹配
+│   │   ├── boost.js         # 长按→方向键加速 + 原生提示
+│   │   ├── main.js          # 入口:初始化与设置监听
+│   │   └── content.css      # 播放器面板样式
+│   └── popup/               # 设置面板(ES Modules)
+│       ├── popup.html
+│       ├── popup.css
+│       └── js/              # i18n / config / dom / storage / presets / rules / stepper / panels
+└── tools/e2e.mjs            # Playwright 端到端验证
 ```
 
 ## 许可证
