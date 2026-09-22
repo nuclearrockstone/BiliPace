@@ -28,10 +28,16 @@ export function sanitizeRules(list) {
 /* ===== 规则优先级拖拽 ===== */
 let rowDrag = null;
 
+// 顺序变化后通知外部自动保存（通过 DOM 事件解耦，避免与 storage 模块循环依赖）。
+function notifyReordered() {
+  document.dispatchEvent(new CustomEvent('bprft:rules-reordered'));
+}
+
 function endRowDrag() {
   if (!rowDrag) return;
   rowDrag.row.classList.remove('dragging');
   rowDrag = null;
+  notifyReordered();
 }
 
 // 拖拽期间统一由 document 监听：DOM 重排（insertBefore）会隐式释放元素级指针捕获，
@@ -81,6 +87,7 @@ function attachRowDrag(row) {
     if (j < 0 || j >= rows.length) return;
     if (dir < 0) box.insertBefore(row, rows[j]);
     else box.insertBefore(rows[j], row);
+    notifyReordered();
   });
 }
 

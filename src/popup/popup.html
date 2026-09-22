@@ -15,6 +15,15 @@
   </header>
 
   <main>
+    <!-- 当前默认倍速 -->
+    <section class="default-rate" aria-live="polite">
+      <div class="default-rate-text">
+        <span class="default-rate-label" data-i18n="currentDefaultRate">当前默认倍速</span>
+        <span class="default-rate-hint" data-i18n="defaultRateHint">在播放页调节倍速后自动记忆</span>
+      </div>
+      <span class="default-rate-value" id="defaultRate">1.0x</span>
+    </section>
+
     <!-- 调节范围 -->
     <section class="panel" data-panel="range">
       <div class="panel-head" role="button" tabindex="0" aria-expanded="true">

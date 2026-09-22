@@ -6,6 +6,9 @@
   "appSub": { "message": "Stepless speed · Title matching · One-click switching" },
   "logoAlt": { "message": "Extension icon" },
 
+  "currentDefaultRate": { "message": "Current Default Speed" },
+  "defaultRateHint": { "message": "Remembered automatically after you adjust speed on a video page" },
+
   "panelRange": { "message": "Speed Range" },
   "panelPresets": { "message": "Preset Speeds" },
   "panelTitleMatch": { "message": "Title Speed Matching" },

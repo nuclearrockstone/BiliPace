@@ -6,6 +6,9 @@
   "appSub": { "message": "无极调速 · 标题匹配 · 一键切换" },
   "logoAlt": { "message": "扩展图标" },
 
+  "currentDefaultRate": { "message": "当前默认倍速" },
+  "defaultRateHint": { "message": "在播放页调节倍速后自动记忆" },
+
   "panelRange": { "message": "调节范围" },
   "panelPresets": { "message": "常用倍速" },
   "panelTitleMatch": { "message": "标题倍速匹配" },

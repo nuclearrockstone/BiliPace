@@ -119,7 +119,9 @@ To install from source manually, follow these steps:
 | Title Matching | Enable keyword-based speed matching | On |
 | Keyword Rules | "keyword + speed" list; drag the handle to reorder (higher = higher priority) | empty |
 
-All settings are saved via `chrome.storage.sync` and take effect on already-open pages immediately.
+The **Current Default Speed** card at the top shows the speed the extension has remembered (updated automatically when you change speed on a video page).
+
+All settings are saved via `chrome.storage.sync` and take effect on already-open pages immediately. The settings panel **auto-saves**: values are written as soon as an input loses focus, Enter is pressed in an input, a checkbox/delete/stepper control is used, or a title rule is reordered by drag or keyboard, so there is no need to click "Save Settings"; the button remains as a manual fallback.
 
 ## Title Speed Matching
 
@@ -148,7 +150,7 @@ BiliPlayRateFineTune/
 │   └── popup/               # Settings page (ES Modules)
 │       ├── popup.html
 │       ├── popup.css
-│       └── js/              # i18n / config / dom / storage / presets / rules / stepper / panels
+│       └── js/              # i18n / config / dom / storage / presets / rules / stepper / panels / autosave
 └── tools/                   # Playwright end-to-end tests
     ├── e2e.mjs              # runner: launches the extension and runs every spec
     └── e2e/
@@ -168,7 +170,7 @@ Changes **unique to the `feat` branch** relative to `master` (excluding anything
 
 #### 🧪 Tests
 
-- Reorganized the e2e suite: `tools/e2e.mjs` is now the single runner, split by feature into `tools/e2e/specs/` (popup, core controls, title matching, long-press boost, part switch, cross-video tag matching, persistence) — **115** assertions covering every feature.
+- Reorganized the e2e suite: `tools/e2e.mjs` is now the single runner, split by feature into `tools/e2e/specs/` (popup, core controls, title matching, long-press boost, part switch, cross-video tag matching, persistence) — **123** assertions covering every feature.
 - **Multi-level tag matching / cross-video regression**: added the `content-switch` spec, using non-multipart videos whose titles contain “歌”, “周杰伦”, or both to verify rule priority, plus full page navigation and in-page SPA recommendation switches (the new title is re-matched after the switch).
 
 ### `00ff141` — fix(ui)

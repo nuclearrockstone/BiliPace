@@ -2,7 +2,7 @@
  * Settings popup — load/save/reset, validation, preset & rule editing,
  * priority sorting, panel collapse persistence, auto-add, i18n and assets.
  */
-import { resetStorage, getStorage, sleep, DEFAULTS } from '../harness.mjs';
+import { resetStorage, getStorage, setStorage, sleep, DEFAULTS } from '../harness.mjs';
 
 async function reloadPopup(extPage) {
   await extPage.reload({ waitUntil: 'domcontentloaded' });
@@ -22,6 +22,7 @@ const snapPopup = p => p.evaluate(() => ({
     rate: +(r.querySelector('.rule-rate')?.value || 0),
   })),
   titleMatch: document.getElementById('titleMatchEnabled')?.checked,
+  defaultRate: document.getElementById('defaultRate')?.textContent,
   collapsed: [...document.querySelectorAll('.panel')].map(p => p.classList.contains('collapsed')),
   status: document.getElementById('status')?.textContent,
   statusIsErr: document.getElementById('status')?.className === 'err',
@@ -155,10 +156,13 @@ export default async function run({ extPage, page, report }) {
     rows[0].querySelector('.drag-handle')
       .dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
   });
-  await sleep(150);
+  await sleep(400);
   s = await snapPopup(extPage);
   check('keyboard ArrowDown moves rule down',
     s.ruleRows[0]?.kw === 'BBB' && s.ruleRows[1]?.kw === 'AAA', s.ruleRows);
+  stored = await getStorage(extPage, { titleRules: [] });
+  check('keyboard reorder autosaves rule order',
+    stored.titleRules.map(r => r.keyword).join(',') === 'BBB,AAA', stored.titleRules);
 
   // --- rule drag priority ---------------------------------------------------
   const handles = extPage.locator('#titleRules .rule-row .drag-handle');
@@ -169,11 +173,15 @@ export default async function run({ extPage, page, report }) {
     await extPage.mouse.down();
     await extPage.mouse.move(h1.x + h1.width / 2, h1.y + h1.height / 2 + 12, { steps: 8 });
     await extPage.mouse.up();
-    await sleep(150);
+    await sleep(400);
     s = await snapPopup(extPage);
     check('drag handle reorders rules', s.ruleRows[0]?.kw === 'AAA', s.ruleRows);
+    stored = await getStorage(extPage, { titleRules: [] });
+    check('drag reorder autosaves rule order',
+      stored.titleRules.map(r => r.keyword).join(',') === 'AAA,BBB', stored.titleRules);
   } else {
     check('drag handle reorders rules', false, { h0, h1 });
+    check('drag reorder autosaves rule order', false);
   }
 
   // --- auto add current video (active tab = player) -------------------------
@@ -197,6 +205,57 @@ export default async function run({ extPage, page, report }) {
   await reloadPopup(extPage);
   s = await snapPopup(extPage);
   check('reset restores default UI', s.min === '0.1' && s.presetRows === 7, s);
+
+  // --- current default speed display ---------------------------------------
+  check('default rate shows 1.0x', s.defaultRate === '1.0x', { defaultRate: s.defaultRate });
+  await setStorage(extPage, { rate: 2.5 });
+  await sleep(200);
+  s = await snapPopup(extPage);
+  check('default rate follows storage changes', s.defaultRate === '2.5x', { defaultRate: s.defaultRate });
+
+  // --- auto-save on blur ----------------------------------------------------
+  await resetStorage(extPage);
+  await reloadPopup(extPage);
+  await extPage.fill('#min', '0.6');
+  await extPage.evaluate(() => document.activeElement.blur());
+  await sleep(400);
+  stored = await getStorage(extPage, { min: null });
+  check('autosave persists on blur without save button', stored.min === 0.6, stored);
+
+  await extPage.fill('#min', '5');
+  await extPage.fill('#max', '1');
+  await extPage.evaluate(() => document.activeElement.blur());
+  await sleep(400);
+  stored = await getStorage(extPage, { min: null, max: null });
+  check('autosave rejects invalid range', stored.min === 0.6 && stored.max === DEFAULTS.max, stored);
+
+  // --- auto-save on Enter ---------------------------------------------------
+  await resetStorage(extPage);
+  await reloadPopup(extPage);
+  await extPage.fill('#min', '0.8');
+  await extPage.press('#min', 'Enter');
+  await sleep(300);
+  stored = await getStorage(extPage, { min: null });
+  check('autosave persists range on Enter without blur', stored.min === 0.8, stored);
+
+  // Enter inside a title rule keyword should persist the new rule
+  const titleCollapsed = await extPage.evaluate(() =>
+    document.querySelector('.panel[data-panel="titleMatch"]').classList.contains('collapsed'));
+  if (titleCollapsed) await extPage.click('.panel[data-panel="titleMatch"] .panel-head');
+  await extPage.click('#addTitleRule');
+  await sleep(120);
+  await extPage.evaluate(() => {
+    const row = document.querySelector('#titleRules .rule-row');
+    row.querySelector('.rule-keyword').value = 'EnterKey';
+    row.querySelector('.rule-rate').value = '1.75';
+  });
+  await extPage.focus('#titleRules .rule-row .rule-keyword');
+  await extPage.press('#titleRules .rule-row .rule-keyword', 'Enter');
+  await sleep(300);
+  stored = await getStorage(extPage, { titleRules: [] });
+  check('autosave persists title rule on Enter',
+    stored.titleRules.some(r => r.keyword === 'EnterKey' && r.rate === 1.75),
+    stored.titleRules);
 
   check('popup has no console/page errors', errors.length === 0, { errors });
 }
