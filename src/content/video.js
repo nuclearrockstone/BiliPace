@@ -38,7 +38,7 @@
       if (state.boosting) return;
       const want = NS.fmtShort(state.desired);
       const cur = (result.textContent || '').trim();
-      if (cur !== want && !/[\d.]/.test(cur)) result.textContent = want;
+      if (cur !== want) result.textContent = want;
     }).observe(result, { childList: true, characterData: true, subtree: true });
   }
   NS.guardResult = guardResult;
@@ -77,6 +77,27 @@
     }
   }
 
+  // B 站切集/切换清晰度时会调用 video.load()，按规范 load() 会把 playbackRate
+  // 重置为 defaultPlaybackRate(通常为 1)，随后触发 ratechange。这是播放器的
+  // 程序性重置，并非用户意图，所以在这段时间内要忽略 ratechange，避免把
+  // 用户设置的期望倍速清成 1。
+  function markSwitching() {
+    state.switching = true;
+    if (state.switchTimer) clearTimeout(state.switchTimer);
+    state.switchTimer = setTimeout(() => {
+      state.switchTimer = null;
+      state.switching = false;
+    }, 3000);
+  }
+
+  function clearSwitching() {
+    if (state.switchTimer) {
+      clearTimeout(state.switchTimer);
+      state.switchTimer = null;
+    }
+    state.switching = false;
+  }
+
   function onRateChange() {
     // 长按加速期间倍速由扩展临时接管，不视为新的期望倍速
     if (state.boosting) return;
@@ -84,6 +105,11 @@
     if (!v) return;
     const r = NS.round2(v.playbackRate);
     if (Math.abs(r - state.desired) > 1e-3) {
+      // 切集等程序性重置：保留期望倍速并立即恢复，而不是跟随播放器
+      if (state.switching) {
+        reapply();
+        return;
+      }
       state.desired = r;
       NS.syncUI(r);
       setResult(r);
@@ -92,14 +118,31 @@
 
   function watchVideo() {
     const v = getVideo();
-    if (!v || v === state.video) return;
-    if (state.video) {
-      NS.REAPPLY_EVENTS.forEach(ev => state.video.removeEventListener(ev, reapply));
-      state.video.removeEventListener('ratechange', onRateChange);
+    if (!v) return;
+    if (v !== state.video) {
+      if (state.video) {
+        NS.REAPPLY_EVENTS.forEach(ev => state.video.removeEventListener(ev, reapply));
+        state.video.removeEventListener('ratechange', onRateChange);
+        state.video.removeEventListener('loadstart', markSwitching);
+        state.video.removeEventListener('emptied', markSwitching);
+        state.video.removeEventListener('canplay', clearSwitching);
+        state.video.removeEventListener('playing', clearSwitching);
+      }
+      state.video = v;
+      NS.REAPPLY_EVENTS.forEach(ev => v.addEventListener(ev, reapply));
+      v.addEventListener('ratechange', onRateChange);
+      v.addEventListener('loadstart', markSwitching);
+      v.addEventListener('emptied', markSwitching);
+      v.addEventListener('canplay', clearSwitching);
+      v.addEventListener('playing', clearSwitching);
     }
-    state.video = v;
-    NS.REAPPLY_EVENTS.forEach(ev => v.addEventListener(ev, reapply));
-    v.addEventListener('ratechange', onRateChange);
+    // 兜底：某些切集路径不触发上面的媒体事件，这里通过 currentSrc 变化发现
+    // 换源并重新应用期望倍速。
+    if (v.currentSrc && v.currentSrc !== state.src) {
+      state.src = v.currentSrc;
+      markSwitching();
+      reapply();
+    }
   }
   NS.watchVideo = watchVideo;
 })();

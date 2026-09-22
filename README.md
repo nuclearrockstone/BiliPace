@@ -30,6 +30,7 @@ BiliPace-B站倍速管家是一个 Chrome / Edge (Manifest V3) 浏览器扩展,�
 - [使用说明](#使用说明)
 - [标题倍速匹配](#标题倍速匹配)
 - [文件结构](#文件结构)
+- [变更日志](#变更日志)
 - [许可证](#许可证)
 
 ---
@@ -149,8 +150,51 @@ BiliPlayRateFineTune/
 │       ├── popup.html
 │       ├── popup.css
 │       └── js/              # i18n / config / dom / storage / presets / rules / stepper / panels
-└── tools/e2e.mjs            # Playwright 端到端验证
+└── tools/                   # Playwright 端到端测试
+    ├── e2e.mjs              # 测试入口:启动扩展并按顺序运行全部规格
+    └── e2e/
+        ├── harness.mjs      # 公共工具:启动浏览器、storage 读写、状态快照
+        └── specs/           # 规格:popup / 核心调速 / 标题匹配 / 长按加速 / 切集 / 跨视频标签匹配 / 持久化
 ```
+
+## 变更日志
+
+以下汇总 `feat` 分支相对 `master` **独有**的变更(不含从 `master` 合并而来的内容),自 `00ff141` 起。
+
+### 未发布 (Unreleased)
+
+#### 🐛 修复
+
+- **多集视频(分P)切集后倍速失效**:B 站切集 / 切换清晰度时会调用 `video.load()`,按规范会把 `playbackRate` 重置为 `defaultPlaybackRate`(通常为 1)并触发 `ratechange`;扩展此前会把这次程序性重置误判为用户意图,把期望倍速覆盖成 1。现在切源期间会忽略该 `ratechange` 并自动重新应用期望倍速,并以 `currentSrc` 变化作为兜底;倍速按钮文字也始终与期望值保持一致,不再回退为 `1.0x`。外部真实改速(切源窗口之外)仍会被采纳。
+
+#### 🧪 测试
+
+- 重整 e2e 测试套件:`tools/e2e.mjs` 作为统一入口,按功能拆分为 `tools/e2e/specs/` 下的 popup、核心调速、标题匹配、长按加速、切集、跨视频标签匹配、持久化等规格,共 **115** 项断言,覆盖全部功能。
+- **多级标签匹配 / 跨视频切换回归**:新增 `content-switch` 规格,使用非多P视频验证标题含「歌」、「周杰伦」及两者兼有时按优先级命中规则,并覆盖完整页面跳转与站内 SPA 推荐位切换(切换后按新标题重新匹配)。
+
+### `00ff141` — fix(ui)
+
+- **全屏下预制倍速按钮显示异常**:`.bprft-chip` 增加 flex 布局并水平、垂直居中。
+
+### `95ce11e` — feat
+
+- **长按 `→` 加速**:在捕获阶段接管右方向键长按手势,将倍速提升至当前倍速的 **2 倍**。
+- **复用原生提示 UI**:按原生结构创建 `.bpx-player-three-playrate-hint-loop`,复用播放器自带样式;左侧图标还原原生 lottie 三段箭头动画(透明度 15%↔80%,相位差 1/6 秒)。
+- **提示轮播垂直居中**:仅保留当前倍速一项,移除上下相邻的半透明预设。
+- **短按保留快进**:短按 `→` 仍快进 5 秒;窗口失焦 / 页面隐藏时自动取消加速。
+- **修复**:B 站 1x 时按钮会被渲染为「倍速」而非数值的问题。
+- **修复**:移除会把临时加速倍速写入 `desired` / `defaultRate` 的 result 观察器,且 `reapply` 不再监听 `ratechange`,避免加速倍速被固定且不写回默认值。
+- **构建**:`manifest` 内容脚本改为 `document_start` 注入,确保监听早于 B 站脚本注册。
+
+### `056d808` — refactor
+
+- **目录整理**:图标 → `icons/`,内容脚本与样式 → `src/content/`,设置面板 → `src/popup/`。
+- **内容脚本模块化**:拆分为 7 个模块(config / utils / video / ui / title / boost / main),按 manifest 顺序注入并共享 `window.BPRFT` 命名空间。
+- **设置面板模块化**:改用 ES Modules,拆分为 i18n / dom / config / storage / presets / rules / stepper / panels。
+- 更新 `manifest.json`、`popup.html` 与 README 中的资源及脚本路径。
+- e2e 新增 popup 冒烟测试(模块加载、i18n、预设渲染、图标解析、无报错)。
+
+行为无变化。
 
 ## 许可证
 

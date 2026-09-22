@@ -30,6 +30,7 @@ BiliPace is a Chrome / Edge (Manifest V3) browser extension built specifically f
 - [Usage](#usage)
 - [Title Speed Matching](#title-speed-matching)
 - [File Structure](#file-structure)
+- [Changelog](#changelog)
 - [License](#license)
 
 ---
@@ -148,8 +149,51 @@ BiliPlayRateFineTune/
 │       ├── popup.html
 │       ├── popup.css
 │       └── js/              # i18n / config / dom / storage / presets / rules / stepper / panels
-└── tools/e2e.mjs            # Playwright end-to-end test
+└── tools/                   # Playwright end-to-end tests
+    ├── e2e.mjs              # runner: launches the extension and runs every spec
+    └── e2e/
+        ├── harness.mjs      # shared helpers: browser launch, storage, snapshots
+        └── specs/           # specs: popup / core / title / boost / parts / cross-video / persistence
 ```
+
+## Changelog
+
+Changes **unique to the `feat` branch** relative to `master` (excluding anything merged in from `master`), from `00ff141` onward.
+
+### Unreleased
+
+#### 🐛 Fixes
+
+- **Speed lost after switching multi-part (分P) episodes**: when switching parts or video quality, Bilibili calls `video.load()`, which per spec resets `playbackRate` to `defaultPlaybackRate` (usually 1) and fires `ratechange`. The extension used to mistake this programmatic reset for a user action and overwrite the desired rate with 1. It now ignores that `ratechange` during a source switch and re-applies the desired rate, with a `currentSrc` fallback; the button label also stays in sync instead of falling back to `1.0x`. Genuine external speed changes (outside a switch) are still adopted.
+
+#### 🧪 Tests
+
+- Reorganized the e2e suite: `tools/e2e.mjs` is now the single runner, split by feature into `tools/e2e/specs/` (popup, core controls, title matching, long-press boost, part switch, cross-video tag matching, persistence) — **115** assertions covering every feature.
+- **Multi-level tag matching / cross-video regression**: added the `content-switch` spec, using non-multipart videos whose titles contain “歌”, “周杰伦”, or both to verify rule priority, plus full page navigation and in-page SPA recommendation switches (the new title is re-matched after the switch).
+
+### `00ff141` — fix(ui)
+
+- **Preset speed buttons rendered incorrectly in fullscreen**: `.bprft-chip` now uses flex layout with horizontal/vertical centering.
+
+### `95ce11e` — feat
+
+- **Hold `→` to boost**: intercept the right-arrow long-press gesture in the capture phase and boost the speed to **2×** the current rate.
+- **Reuse the native hint UI**: build a `.bpx-player-three-playrate-hint-loop` node using the player's own styles; the left icon recreates the original lottie three-chevron animation (opacity 15%↔80%, 1/6 s phase offset).
+- **Centered hint carousel**: keep only the current speed item and drop the semi-transparent neighbours.
+- **Short press still seeks**: a short `→` press still seeks +5 s; losing focus / hiding the page cancels the boost.
+- **Fix**: at 1x Bilibili renders the button as “倍速” instead of a number.
+- **Fix**: removed the result MutationObserver that wrote the temporary boost rate into `desired` / `defaultRate`, and stopped `reapply` from listening to `ratechange`, so the boost rate is no longer pinned and written back as the default.
+- **Build**: the manifest now injects content scripts at `document_start` so listeners register before Bilibili's scripts.
+
+### `056d808` — refactor
+
+- **Reorganized directories**: icons → `icons/`, content scripts/styles → `src/content/`, settings page → `src/popup/`.
+- **Modularized content scripts**: split into 7 modules (config / utils / video / ui / title / boost / main), injected in manifest order and sharing the `window.BPRFT` namespace.
+- **Modularized the settings page**: switched to ES Modules, split into i18n / dom / config / storage / presets / rules / stepper / panels.
+- Updated asset/script paths in `manifest.json`, `popup.html` and the READMEs.
+- Added a popup smoke test to e2e (module loading, i18n, presets, icons, no errors).
+
+No behaviour changes.
 
 ## License
 
