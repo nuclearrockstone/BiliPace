@@ -160,42 +160,57 @@ BiliPlayRateFineTune/
 
 ## Changelog
 
-Changes **unique to the `feat` branch** relative to `master` (excluding anything merged in from `master`), from `00ff141` onward.
+### v1.4.0 — 2026-09-22
 
-### Unreleased
+This release centres on **a more stable speed experience** and **a smoother settings panel**: the hold `→` boost was rebuilt to reuse Bilibili's native hint UI, fullscreen button rendering and the speed reset after switching multi-part episodes were fixed, the content scripts and settings panel were fully modularized, the settings panel gained a “Current Default Speed” card and auto-save, and the e2e suite was reorganized into feature-based specs.
 
-#### 🐛 Fixes
+#### ✨ Features & highlights
 
-- **Speed lost after switching multi-part (分P) episodes**: when switching parts or video quality, Bilibili calls `video.load()`, which per spec resets `playbackRate` to `defaultPlaybackRate` (usually 1) and fires `ratechange`. The extension used to mistake this programmatic reset for a user action and overwrite the desired rate with 1. It now ignores that `ratechange` during a source switch and re-applies the desired rate, with a `currentSrc` fallback; the button label also stays in sync instead of falling back to `1.0x`. Genuine external speed changes (outside a switch) are still adopted.
+- **Hold `→` to boost**: the extension now takes over the right-arrow long-press gesture in the capture phase, boosting the speed to **2×** the current rate and reusing the player's native hint styles and lottie chevron animation.
+- **Default speed at a glance**: a new “Current Default Speed” card at the top of the settings panel tracks the speed remembered in `chrome.storage.sync`.
+- **Auto-save**: values are written as soon as an input loses focus, Enter is pressed, a checkbox/delete/stepper control is used, or a title rule is reordered, so there is no need to click “Save Settings” (the button remains as a manual fallback).
+- **Stable speed across episodes**: switching multi-part (分P) episodes or video quality no longer lets the programmatic `ratechange` from `video.load()` overwrite the desired rate.
+- **Fullscreen button fix**: preset speed buttons now render correctly in fullscreen.
+- **Engineering**: content scripts split into 7 modules, settings page moved to ES Modules, and the e2e suite restructured into a single runner plus feature-based specs with **123** assertions.
 
-#### 🧪 Tests
+#### 📝 Commit details
 
-- Reorganized the e2e suite: `tools/e2e.mjs` is now the single runner, split by feature into `tools/e2e/specs/` (popup, core controls, title matching, long-press boost, part switch, cross-video tag matching, persistence) — **123** assertions covering every feature.
-- **Multi-level tag matching / cross-video regression**: added the `content-switch` spec, using non-multipart videos whose titles contain “歌”, “周杰伦”, or both to verify rule priority, plus full page navigation and in-page SPA recommendation switches (the new title is re-matched after the switch).
+##### `00ff141` — fix(ui): preset speed buttons render correctly in fullscreen
 
-### `00ff141` — fix(ui)
+- `.bprft-chip` now uses flex layout with horizontal/vertical centering, fixing the broken preset speed buttons in fullscreen.
 
-- **Preset speed buttons rendered incorrectly in fullscreen**: `.bprft-chip` now uses flex layout with horizontal/vertical centering.
+##### `95ce11e` — feat: hold-`→` boost taken over by the extension, reusing the native hint UI
 
-### `95ce11e` — feat
+- Intercept the `ArrowRight` long-press gesture in the `window` capture phase and boost the speed to **2×** the current rate.
+- Build a `.bpx-player-three-playrate-hint-loop` node using the player's own styles; the left icon recreates the original lottie three-chevron animation (opacity 15%↔80%, 1/6 s phase offset).
+- Keep only the current speed item, vertically centered, and drop the semi-transparent neighbours.
+- A short press still seeks +5 s; losing focus / hiding the page cancels the boost.
+- Fix Bilibili rendering the button as “倍速” instead of a number at 1x.
+- Remove the result `MutationObserver` that wrote the temporary boost rate into `desired`/`defaultRate`, and stop `reapply` from listening to `ratechange`, so the boost rate is no longer pinned and written back as the default.
+- Switch the manifest to `document_start` so listeners register before Bilibili's scripts.
 
-- **Hold `→` to boost**: intercept the right-arrow long-press gesture in the capture phase and boost the speed to **2×** the current rate.
-- **Reuse the native hint UI**: build a `.bpx-player-three-playrate-hint-loop` node using the player's own styles; the left icon recreates the original lottie three-chevron animation (opacity 15%↔80%, 1/6 s phase offset).
-- **Centered hint carousel**: keep only the current speed item and drop the semi-transparent neighbours.
-- **Short press still seeks**: a short `→` press still seeks +5 s; losing focus / hiding the page cancels the boost.
-- **Fix**: at 1x Bilibili renders the button as “倍速” instead of a number.
-- **Fix**: removed the result MutationObserver that wrote the temporary boost rate into `desired` / `defaultRate`, and stopped `reapply` from listening to `ratechange`, so the boost rate is no longer pinned and written back as the default.
-- **Build**: the manifest now injects content scripts at `document_start` so listeners register before Bilibili's scripts.
+##### `056d808` — refactor: modularize the project and reorganize the directory structure
 
-### `056d808` — refactor
-
-- **Reorganized directories**: icons → `icons/`, content scripts/styles → `src/content/`, settings page → `src/popup/`.
-- **Modularized content scripts**: split into 7 modules (config / utils / video / ui / title / boost / main), injected in manifest order and sharing the `window.BPRFT` namespace.
-- **Modularized the settings page**: switched to ES Modules, split into i18n / dom / config / storage / presets / rules / stepper / panels.
+- **Directories**: icons → `icons/`, content scripts/styles → `src/content/`, settings page → `src/popup/`.
+- Content scripts split into 7 modules (config / utils / video / ui / title / boost / main), injected in manifest order and sharing the `window.BPRFT` namespace.
+- Settings page switched to ES Modules, split into i18n / dom / config / storage / presets / rules / stepper / panels.
 - Updated asset/script paths in `manifest.json`, `popup.html` and the READMEs.
-- Added a popup smoke test to e2e (module loading, i18n, presets, icons, no errors).
+- Added a popup smoke test to e2e (module loading, i18n, presets, icons, no errors); no behaviour changes.
 
-No behaviour changes.
+##### `c5fc240` — fix(video): re-apply speed after switching episodes and overhaul the e2e suite
+
+- **Fix**: speed was lost after switching multi-part (分P) episodes / video quality. Bilibili calls `video.load()`, which per spec resets `playbackRate` to `defaultPlaybackRate` (usually 1) and fires `ratechange`; the extension mistook this programmatic reset for a user action and overwrote the desired rate. It now ignores that `ratechange` during a source switch and re-applies the desired rate, with a `currentSrc` fallback; genuine external speed changes (outside a switch) are still adopted, and the button label stays in sync with the desired value.
+- **Tests**: `tools/e2e.mjs` is now the single runner, split by feature into `tools/e2e/specs/` (popup / core controls / title matching / long-press boost / part switch / cross-video tag matching / persistence); added multi-level tag matching and cross-video (non-multipart) regression covering titles containing “歌”, “周杰伦”, or both, plus full page navigation and in-page SPA recommendation switches.
+- **Docs**: added the changelog and file-structure notes to the READMEs.
+
+##### `523f986` — feat(popup): show default speed and auto-save on blur/Enter/reorder
+
+- New “Current Default Speed” card at the top of the settings panel, reading and live-tracking `rate` in `chrome.storage.sync`.
+- New `autosave` module: saves automatically when an input loses focus, Enter is pressed, a checkbox is toggled, or a stepper/delete action is used — no need to click “Save Settings”.
+- Title rules auto-save after drag or keyboard reordering (rules notify via a custom event to avoid a circular dependency with storage).
+- Save logic gained snapshot de-duplication and debouncing, cancels pending saves before reset, and does not re-render the DOM on auto-save so ongoing edits are not interrupted.
+- Kept the manual “Save Settings” button as a fallback and persist immediately after “Auto-add current video”.
+- e2e added assertions for the default-speed display and auto-save on blur / Enter / drag / keyboard reorder (35 popup assertions).
 
 ## License
 
